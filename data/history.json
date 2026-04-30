@@ -1,1 +1,30 @@
-[]
+[
+  {
+    "as_of": "2026-04-30",
+    "timestamp_utc": "2026-04-30T07:19:32.971231Z",
+    "composite_score": 80.9,
+    "status_label": "严重超买",
+    "status_zone": "severe_overbought",
+    "dimension_scores": {
+      "volatility": 84.3,
+      "sentiment": 63.6,
+      "spx_breadth": 74.6,
+      "credit": 92.8,
+      "ndx": 77.8,
+      "cta": 100.0,
+      "momentum": 72.1
+    },
+    "headline": "综合 80.9 分，严重超买，CTA 满仓信用极紧",
+    "verdict": "CTA 满仓 + 信用零溢价 + NDX 极度超买，是减仓不是加仓的位置，用低 VIX 买保险。",
+    "key_indicators_snapshot": {
+      "VIX": 18.81,
+      "VXN": 23.76,
+      "SPX": 7135.95,
+      "NDX": 27186.98,
+      "HY_OAS": 285.0,
+      "fear_greed": 63.6,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 100
+    }
+  }
+]
