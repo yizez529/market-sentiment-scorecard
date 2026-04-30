@@ -16,14 +16,14 @@ import anthropic
 
 
 MODEL = "claude-opus-4-7"
-MAX_TOKENS = 4000
+MAX_TOKENS = 8000  # 26 板块简评 + sector_rotation_summary + 原宏观分析
 
 
 SYSTEM_PROMPT = """你是 Aaron 的美股市场情绪分析师。Aaron 是资深 buy-side 投资人，习惯结构化、conclusion-first 的中文输出。
 
-你的任务：根据传入的指标数据和 7 维度评分，生成一份每日市场情绪报告。
+你的任务：根据传入的指标数据 + 7 维度宏观评分 + 26 个板块评分，生成每日市场情绪报告。
 
-# 7 维度框架（不要在输出里再次解释，Aaron 已经熟悉）：
+# 宏观 7 维度框架（不要在输出里再次解释，Aaron 已经熟悉）：
 1. 波动率（18%）：VIX, VXN, MOVE
 2. 情绪（14%）：F&G, AAII, NAAIM
 3. SPX 广度（12%）：%>200MA, %>50MA, RSP/SPY
@@ -32,7 +32,7 @@ SYSTEM_PROMPT = """你是 Aaron 的美股市场情绪分析师。Aaron 是资深
 6. CTA / 量化（14%）：CTA 仓位百分位代理, Put/Call
 7. 价格动量（16%）：SPX RSI, 连涨天数, MA 偏离
 
-# 评分区间含义：
+# 宏观评分区间含义：
 - 0-15: 极度超卖（恐慌底）→ 全力建仓
 - 15-30: 严重超卖 → 大幅加仓
 - 30-45: 偏超卖 → 加仓
@@ -40,6 +40,11 @@ SYSTEM_PROMPT = """你是 Aaron 的美股市场情绪分析师。Aaron 是资深
 - 55-70: 偏超买 → 停止加仓
 - 70-85: 严重超买 → 部分减仓 (10-25%)
 - 85-100: 极度超买（顶部）→ 大幅减仓 (30-50%)
+
+# 板块评分区间（与宏观相同方向但不同分档）：
+- 0-15: 严重超卖   - 15-35: 超卖/抄底候选   - 35-50: 偏弱/值得观察
+- 50-65: 中性偏强  - 65-80: 偏强/持有       - 80-92: 严重超买/减仓
+- 92-100: 极度超买
 
 # 输出要求（严格 JSON，禁止 markdown fence 或前言）：
 {
@@ -62,7 +67,12 @@ SYSTEM_PROMPT = """你是 Aaron 的美股市场情绪分析师。Aaron 是资深
     "trigger_to_act": "什么信号出现时改变立场"
   },
   "next_to_watch": ["未来 3-7 天关键事件 / 数据 / 触发位"],
-  "verdict": "一句给 Aaron 的最终决断（25-40 字）"
+  "verdict": "一句给 Aaron 的最终决断（25-40 字）",
+  "sector_comments": {
+    "<sector_key>": "一句板块简评（20-40 字），点出关键驱动或风险",
+    "...": "对每一个传入的板块都要给一句简评"
+  },
+  "sector_rotation_summary": "一句话总结当期板块轮动主旋律（30-60 字），如：'AI/Neocloud 极致超买，能源/中概深度超卖，资金从 Tech 向 Defensive 轮动初现'"
 }
 
 # 风格要求：
@@ -70,17 +80,19 @@ SYSTEM_PROMPT = """你是 Aaron 的美股市场情绪分析师。Aaron 是资深
 - 使用具体数字（如 "VIX 18.7"，不要 "VIX 较低"）
 - 引用历史可比时点（如 "类似 2025/4 但更温和"）
 - 不要重复 Aaron 已知的框架内容
-- 中文输出，但保留英文专业术语（VIX, F&G, OAS, CTA, RSI, MA 等不翻译）
+- 中文输出，但保留英文专业术语（VIX, F&G, OAS, CTA, RSI, MA, ETF 名等不翻译）
+- 板块简评必须 actionable，不要泛泛而谈（坏例："AI 半导体走强" / 好例："SMH RSI 78 + 距 200MA +22%，CTA 已满仓，等回踩 50MA 再加仓而非追涨"）
 
 # 严格规则：
 - 只输出一个有效 JSON 对象，不要任何前言、解释、markdown fence
 - 所有字段必填，缺数据用 "N/A" 字符串
+- sector_comments 必须包含传入的每一个 sector_key（不可遗漏）
 - JSON 内字符串使用中文双引号 " " 也是错的——只用 ASCII " "
 """
 
 
-def call_claude(indicators: Dict, score: Dict, history: Dict = None) -> Dict[str, Any]:
-    """调用 Opus 4.7 生成分析"""
+def call_claude(indicators: Dict, score: Dict, history: Dict = None, sectors_scored: Dict = None) -> Dict[str, Any]:
+    """调用 Opus 4.7 生成分析（含板块简评）"""
     api_key = os.environ.get("ANTHROPIC_API_KEY")
     if not api_key:
         raise RuntimeError("ANTHROPIC_API_KEY missing")
@@ -89,6 +101,26 @@ def call_claude(indicators: Dict, score: Dict, history: Dict = None) -> Dict[str
 
     # 构造用户消息
     today = datetime.utcnow().strftime("%Y-%m-%d")
+
+    # 板块数据精简版给 LLM（只传必要字段，节省 token）
+    sectors_compact = []
+    if sectors_scored and "all_scored" in sectors_scored:
+        for s in sectors_scored["all_scored"]:
+            sectors_compact.append({
+                "key": s["sector"]["key"],
+                "name_zh": s["sector"]["name_zh"],
+                "ticker": s["sector"]["ticker_or_basket"],
+                "components": s["sector"]["components"],
+                "composite": s["composite"],
+                "label": s["label"],
+                "trend": s["dimensions"]["trend"]["score"],
+                "momentum": s["dimensions"]["momentum"]["score"],
+                "rs": s["dimensions"]["relative_strength"]["score"],
+                "ma200_dist": s["raw_metrics"].get("ma200_dist_pct"),
+                "ma50_dist": s["raw_metrics"].get("ma50_dist_pct"),
+                "rsi14": s["raw_metrics"].get("rsi14"),
+                "rs_3m": s["raw_metrics"].get("rs_3m_vs_bm"),
+            })
 
     user_payload = {
         "today": today,
@@ -99,11 +131,22 @@ def call_claude(indicators: Dict, score: Dict, history: Dict = None) -> Dict[str
         },
         "key_indicators": _summarize_indicators(indicators),
         "previous_snapshot": history if history else "first_run",
+        "sectors": sectors_compact,
     }
 
+    sectors_note = ""
+    if sectors_compact:
+        sector_keys = [s["key"] for s in sectors_compact]
+        sectors_note = (
+            f"\n\n板块数据共 {len(sectors_compact)} 个，sector_comments 必须给每一个 key 一句简评："
+            f"\n{', '.join(sector_keys)}"
+        )
+
     user_msg = (
-        f"以下是今日（{today}）的指标数据和 7 维度评分。请按 system prompt 的格式输出 JSON 报告。\n\n"
-        f"```json\n{json.dumps(user_payload, indent=2, ensure_ascii=False)}\n```\n\n"
+        f"以下是今日（{today}）的指标数据、宏观 7 维度评分、{len(sectors_compact)} 个板块评分。"
+        f"请按 system prompt 的格式输出 JSON 报告。\n\n"
+        f"```json\n{json.dumps(user_payload, indent=2, ensure_ascii=False)}\n```"
+        f"{sectors_note}\n\n"
         f"再次提醒：只输出一个有效 JSON，不要 markdown fence 或前言。"
     )
 
@@ -233,6 +276,7 @@ def _summarize_indicators(indicators: Dict) -> Dict:
 if __name__ == "__main__":
     indicators_path = os.environ.get("INDICATORS_FILE", "/tmp/indicators.json")
     score_path = os.environ.get("SCORE_FILE", "/tmp/score.json")
+    sectors_path = os.environ.get("SECTORS_SCORED_FILE", "/tmp/sectors_scored.json")
     history_path = os.environ.get("HISTORY_FILE", "data/history.json")
     out_path = os.environ.get("OUTPUT_FILE", "/tmp/analysis.json")
 
@@ -240,6 +284,14 @@ if __name__ == "__main__":
         indicators = json.load(f)
     with open(score_path) as f:
         score = json.load(f)
+
+    sectors_scored = None
+    if os.path.exists(sectors_path):
+        try:
+            with open(sectors_path) as f:
+                sectors_scored = json.load(f)
+        except Exception as e:
+            print(f"  [sectors] failed to load: {e}")
 
     history = None
     if os.path.exists(history_path):
@@ -252,7 +304,7 @@ if __name__ == "__main__":
             print(f"  [history] failed to load: {e}")
 
     try:
-        result = call_claude(indicators, score, history)
+        result = call_claude(indicators, score, history, sectors_scored)
         with open(out_path, "w") as f:
             json.dump(result, f, indent=2, ensure_ascii=False)
         print(f"\n✅ Analysis saved to {out_path}")
@@ -260,6 +312,10 @@ if __name__ == "__main__":
     except Exception as e:
         # 即使失败，也写一个 fallback analysis 让 pipeline 继续
         print(f"\n❌ Claude analysis failed: {e}")
+        sector_comments_fallback = {}
+        if sectors_scored and "all_scored" in sectors_scored:
+            for s in sectors_scored["all_scored"]:
+                sector_comments_fallback[s["sector"]["key"]] = f"{s['label']} (评分 {s['composite']})"
         fallback = {
             "analysis": {
                 "headline": f"评分 {score['composite_score']} ({score['status_label']}) — Claude 分析失败",
@@ -274,6 +330,8 @@ if __name__ == "__main__":
                 },
                 "next_to_watch": [],
                 "verdict": f"原始评分 {score['composite_score']}，Claude 分析失败请检查日志",
+                "sector_comments": sector_comments_fallback,
+                "sector_rotation_summary": "N/A (Claude 分析失败)",
             },
             "error": str(e),
             "model": MODEL,

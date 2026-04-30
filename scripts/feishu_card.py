@@ -30,8 +30,8 @@ def emoji_for_score(score: float) -> str:
     return "🟢🟢"
 
 
-def build_card(score: Dict, analysis: Dict, indicators: Dict, page_url: str) -> Dict:
-    """构造飞书互动卡片"""
+def build_card(score: Dict, analysis: Dict, indicators: Dict, page_url: str, sectors_scored: Dict = None) -> Dict:
+    """构造飞书互动卡片（含板块 Top 5+5 面板）"""
     composite = score["composite_score"]
     status_label = score["status_label"]
     zone = score["status_zone"]
@@ -45,6 +45,8 @@ def build_card(score: Dict, analysis: Dict, indicators: Dict, page_url: str) -> 
     verdict = a.get("verdict", "")
     next_watch = a.get("next_to_watch", [])
     key_changes = a.get("key_changes", "")
+    sector_comments = a.get("sector_comments", {})
+    sector_rotation = a.get("sector_rotation_summary", "")
 
     today = indicators.get("as_of_date", "")
 
@@ -147,6 +149,43 @@ def build_card(score: Dict, analysis: Dict, indicators: Dict, page_url: str) -> 
 
     elements.append({"tag": "hr"})
 
+    # === 板块情绪面板（Top 5 最超买 + Top 5 最超卖） ===
+    if sectors_scored and sectors_scored.get("all_scored"):
+        top5_ob = sectors_scored.get("top5_overbought", [])[:5]
+        top5_os = sectors_scored.get("top5_oversold", [])[:5]
+
+        # 标题 + 板块轮动一句话总结
+        rotation_md = f"**📊 板块情绪 ({sectors_scored.get('scored_count', 0)} 个)**"
+        if sector_rotation and sector_rotation != "N/A":
+            rotation_md += f"\n_{sector_rotation}_"
+        elements.append({"tag": "div", "text": {"tag": "lark_md", "content": rotation_md}})
+
+        # 最超买 5 个（每行：emoji 板块名 评分 标签 + 一句简评）
+        ob_lines = ["**🔥 最超买 Top 5**"]
+        for s in top5_ob:
+            sec = s["sector"]
+            comment = sector_comments.get(sec["key"], "")
+            ob_lines.append(
+                f"{s['emoji']} **{sec['name_zh']}** ({sec['ticker_or_basket']}) **{s['composite']:.0f}** {s['label']}"
+            )
+            if comment and comment not in ("N/A", ""):
+                ob_lines.append(f"   💭 {comment}")
+        elements.append({"tag": "div", "text": {"tag": "lark_md", "content": "\n".join(ob_lines)}})
+
+        # 最超卖 5 个
+        os_lines = ["**🧊 最超卖 Top 5**"]
+        for s in top5_os:
+            sec = s["sector"]
+            comment = sector_comments.get(sec["key"], "")
+            os_lines.append(
+                f"{s['emoji']} **{sec['name_zh']}** ({sec['ticker_or_basket']}) **{s['composite']:.0f}** {s['label']}"
+            )
+            if comment and comment not in ("N/A", ""):
+                os_lines.append(f"   💭 {comment}")
+        elements.append({"tag": "div", "text": {"tag": "lark_md", "content": "\n".join(os_lines)}})
+
+        elements.append({"tag": "hr"})
+
     # Verdict + 链接
     verdict_md = f"**🎯 决断**：{verdict}" if verdict else ""
     elements.append({
@@ -215,6 +254,7 @@ if __name__ == "__main__":
     score_path = os.environ.get("SCORE_FILE", "/tmp/score.json")
     analysis_path = os.environ.get("ANALYSIS_FILE", "/tmp/analysis.json")
     indicators_path = os.environ.get("INDICATORS_FILE", "/tmp/indicators.json")
+    sectors_path = os.environ.get("SECTORS_SCORED_FILE", "/tmp/sectors_scored.json")
     page_url = os.environ.get(
         "PAGE_URL",
         "https://github.com/yizez529/market-sentiment-scorecard"
@@ -229,7 +269,15 @@ if __name__ == "__main__":
     with open(analysis_path) as f: analysis = json.load(f)
     with open(indicators_path) as f: indicators = json.load(f)
 
-    card = build_card(score, analysis, indicators, page_url)
+    sectors_scored = None
+    if os.path.exists(sectors_path):
+        try:
+            with open(sectors_path) as f:
+                sectors_scored = json.load(f)
+        except Exception as e:
+            print(f"  [sectors] failed to load: {e}")
+
+    card = build_card(score, analysis, indicators, page_url, sectors_scored)
     result = send_to_feishu(webhook, card)
     if result.get("code") == 0 or result.get("code") is None:
         print("✅ Feishu card sent")

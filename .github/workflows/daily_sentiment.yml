@@ -44,7 +44,7 @@ jobs:
       - name: Check all scripts importable
         run: |
           cd scripts
-          python -c "import fetch_indicators, calculate_score, claude_analysis, generate_html, feishu_card, run_daily; print('✅ All imports OK')"
+          python -c "import fetch_indicators, calculate_score, claude_analysis, generate_html, feishu_card, run_daily, sectors_config, fetch_sectors, score_sectors; print('✅ All imports OK (含 3 个 sector 脚本)')"
 
       - name: Check required env vars present
         env:

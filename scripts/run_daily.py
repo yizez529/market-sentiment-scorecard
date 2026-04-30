@@ -15,6 +15,8 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from fetch_indicators import fetch_all
 from calculate_score import calculate_composite
+from fetch_sectors import fetch_all_sectors
+from score_sectors import score_all_sectors
 from claude_analysis import call_claude
 from generate_html import render_html, CSS
 from feishu_card import build_card, send_to_feishu
@@ -106,6 +108,34 @@ def main():
     with open(score_file, "w") as f:
         json.dump(score, f, indent=2, ensure_ascii=False)
 
+    # === 2b. Fetch & score sectors ===
+    print("\n" + "=" * 60)
+    print("STEP 2b: Fetch & score sectors")
+    print("=" * 60)
+    sectors_scored = None
+    try:
+        sectors_data = fetch_all_sectors()
+        sectors_file = "/tmp/sectors.json"
+        with open(sectors_file, "w") as f:
+            json.dump(sectors_data, f, indent=2, default=str)
+
+        sectors_scored = score_all_sectors(sectors_data)
+        sectors_scored_file = "/tmp/sectors_scored.json"
+        with open(sectors_scored_file, "w") as f:
+            json.dump(sectors_scored, f, indent=2, ensure_ascii=False)
+
+        print(f"\n板块评分完成: {sectors_scored['scored_count']}/{sectors_scored['total_sectors']}")
+        print("\nTop 5 最超买:")
+        for s in sectors_scored["top5_overbought"]:
+            print(f"  {s['emoji']} {s['sector']['name_zh']:18s} {s['composite']:>5.1f}  ({s['label']})")
+        print("\nTop 5 最超卖:")
+        for s in sectors_scored["top5_oversold"]:
+            print(f"  {s['emoji']} {s['sector']['name_zh']:18s} {s['composite']:>5.1f}  ({s['label']})")
+    except Exception as e:
+        print(f"⚠️  Sectors step failed: {e}")
+        traceback.print_exc()
+        # 不阻塞主流程
+
     # === 3. Claude analysis ===
     print("\n" + "=" * 60)
     print("STEP 3: Claude Opus 4.7 analysis")
@@ -121,10 +151,14 @@ def main():
             pass
 
     try:
-        analysis = call_claude(indicators, score, history_for_context)
+        analysis = call_claude(indicators, score, history_for_context, sectors_scored)
     except Exception as e:
         print(f"❌ Claude failed: {e}")
         traceback.print_exc()
+        sector_comments_fallback = {}
+        if sectors_scored and "all_scored" in sectors_scored:
+            for s in sectors_scored["all_scored"]:
+                sector_comments_fallback[s["sector"]["key"]] = f"{s['label']} (评分 {s['composite']})"
         analysis = {
             "analysis": {
                 "headline": f"评分 {score['composite_score']} ({score['status_label']}) — Claude 分析失败",
@@ -137,6 +171,8 @@ def main():
                 },
                 "next_to_watch": [],
                 "verdict": "Claude 分析失败请检查 GitHub Actions 日志",
+                "sector_comments": sector_comments_fallback,
+                "sector_rotation_summary": "N/A (Claude 分析失败)",
             },
             "error": str(e),
         }
@@ -159,7 +195,7 @@ def main():
     print("\n" + "=" * 60)
     print("STEP 5: Generate HTML dashboard")
     print("=" * 60)
-    html = render_html(score, indicators, analysis, history)
+    html = render_html(score, indicators, analysis, history, sectors_scored)
     today = indicators.get("as_of_date", datetime.utcnow().strftime("%Y-%m-%d"))
 
     with open(docs_dir / "index.html", "w", encoding="utf-8") as f:
@@ -177,7 +213,7 @@ def main():
     if webhook:
         # 完整 archive URL（指向当日，确保历史链接也有效）
         archive_url = f"{page_url.rstrip('/')}/archive/{today}.html"
-        card = build_card(score, analysis, indicators, archive_url)
+        card = build_card(score, analysis, indicators, archive_url, sectors_scored)
         result = send_to_feishu(webhook, card)
         if result.get("code") == 0:
             print("✅ Feishu pushed successfully")

@@ -131,7 +131,7 @@ def get_zone_class(zone: str) -> str:
     return f"zone-{zone.replace('_', '-')}"
 
 
-def render_html(score: Dict, indicators: Dict, analysis: Dict, history: list = None) -> str:
+def render_html(score: Dict, indicators: Dict, analysis: Dict, history: list = None, sectors_scored: Dict = None) -> str:
     """生成完整 HTML"""
     today = score.get("as_of", indicators.get("as_of_date", datetime.utcnow().strftime("%Y-%m-%d")))
     composite = score["composite_score"]
@@ -147,6 +147,8 @@ def render_html(score: Dict, indicators: Dict, analysis: Dict, history: list = N
     inv_advice = analysis_data.get("investment_advice", {})
     next_watch = analysis_data.get("next_to_watch", [])
     verdict = analysis_data.get("verdict", "")
+    sector_comments = analysis_data.get("sector_comments", {})
+    sector_rotation = analysis_data.get("sector_rotation_summary", "")
 
     # 各维度卡片
     dim_cards_html = ""
@@ -189,6 +191,102 @@ def render_html(score: Dict, indicators: Dict, analysis: Dict, history: list = N
 
     drivers_html = "".join(f"<li>{d}</li>" for d in main_drivers)
     next_watch_html = "".join(f"<li>{w}</li>" for w in next_watch)
+
+    # === 板块情绪网格 + 指南 ===
+    sectors_html = ""
+    sectors_guide_html = ""
+    if sectors_scored and sectors_scored.get("all_scored"):
+        all_scored = sectors_scored["all_scored"]
+
+        # 板块卡片网格
+        cards_html = ""
+        for s in all_scored:
+            sec = s["sector"]
+            comment = sector_comments.get(sec["key"], "")
+            zone = s["zone"]
+            ma200 = s["raw_metrics"].get("ma200_dist_pct")
+            ma50 = s["raw_metrics"].get("ma50_dist_pct")
+            rsi = s["raw_metrics"].get("rsi14")
+            rs_3m = s["raw_metrics"].get("rs_3m_vs_bm")
+
+            metrics_line_parts = []
+            if ma200 is not None:
+                metrics_line_parts.append(f"距200MA {ma200:+.1f}%")
+            if rsi is not None:
+                metrics_line_parts.append(f"RSI {rsi:.0f}")
+            if rs_3m is not None:
+                metrics_line_parts.append(f"3M RS {rs_3m:+.1f}%")
+            metrics_line = " · ".join(metrics_line_parts)
+
+            cards_html += f"""
+            <div class="sector-card sector-{zone}">
+              <div class="sector-header">
+                <span class="sector-emoji">{s['emoji']}</span>
+                <span class="sector-score">{s['composite']:.0f}</span>
+              </div>
+              <div class="sector-name">{sec['name_zh']}</div>
+              <div class="sector-ticker">{sec['ticker_or_basket']}</div>
+              <div class="sector-label">{s['label']}</div>
+              <div class="sector-metrics">{metrics_line}</div>
+              {f'<div class="sector-comment">💭 {comment}</div>' if comment and comment != "N/A" else ''}
+            </div>
+            """
+
+        rotation_html = f'<p class="sector-rotation">🔄 <strong>板块轮动</strong>：{sector_rotation}</p>' if sector_rotation and sector_rotation != "N/A" else ""
+
+        sectors_html = f"""
+<section class="sectors-section">
+  <h2>📊 热门板块情绪 ({len(all_scored)} 个)</h2>
+  {rotation_html}
+  <div class="sector-grid">{cards_html}</div>
+</section>
+"""
+
+        # 板块指南（成分说明）
+        guide_rows = ""
+        for s in all_scored:
+            sec = s["sector"]
+            guide_rows += f"""
+            <tr>
+              <td><strong>{sec['name_zh']}</strong></td>
+              <td><code>{sec['ticker_or_basket']}</code></td>
+              <td>{sec['root']}</td>
+              <td class="components-cell">{sec['components']}</td>
+              <td>vs {sec['benchmark']}</td>
+            </tr>
+            """
+
+        sectors_guide_html = f"""
+<section class="guide sectors-guide">
+  <h2>📋 板块成分说明</h2>
+  <p class="guide-intro">下面是 {len(all_scored)} 个板块各自的代表 ETF 或成分股篮子、所属根、对比基准。</p>
+  <table class="sectors-guide-table">
+    <thead>
+      <tr><th>板块</th><th>代表 ETF / 篮子</th><th>所属根</th><th>核心成分</th><th>相对强度基准</th></tr>
+    </thead>
+    <tbody>{guide_rows}</tbody>
+  </table>
+  <h3 style="margin-top:20px;">🎯 板块评分 7 档标签</h3>
+  <table class="zone-table">
+    <thead><tr><th>分数</th><th>标签</th><th>动作</th></tr></thead>
+    <tbody>
+      <tr class="zone-extreme-os"><td>0-15</td><td>🟢🟢 严重超卖</td><td>深度抄底候选</td></tr>
+      <tr class="zone-severe-os"><td>15-35</td><td>🟢 超卖/抄底候选</td><td>分批建仓</td></tr>
+      <tr class="zone-mod-os"><td>35-50</td><td>🔵 偏弱/值得观察</td><td>等技术面确认</td></tr>
+      <tr class="zone-neutral"><td>50-65</td><td>⚪ 中性偏强</td><td>持仓不动</td></tr>
+      <tr class="zone-mod-ob"><td>65-80</td><td>🟡 偏强/持有</td><td>跟踪不加仓</td></tr>
+      <tr class="zone-severe-ob"><td>80-92</td><td>🟠 严重超买</td><td>部分减仓</td></tr>
+      <tr class="zone-extreme-ob"><td>92-100</td><td>🔴 极度超买</td><td>大幅减仓</td></tr>
+    </tbody>
+  </table>
+  <h3 style="margin-top:20px;">📐 板块评分 3 维度</h3>
+  <ul class="caveats">
+    <li><strong>趋势 (40%)</strong>：板块价格距 200MA 偏离 + 距 50MA 偏离</li>
+    <li><strong>动量 (30%)</strong>：14 日 RSI + 5 日变化率 + 20 日变化率</li>
+    <li><strong>相对强度 (30%)</strong>：相对 benchmark（多数 vs SPY，部分 vs QQQ 或 vs IBIT）的 1 月超额 + 3 月超额</li>
+  </ul>
+</section>
+"""
 
     # 历史趋势 mini-chart (如果有数据)
     history_html = ""
@@ -290,9 +388,13 @@ def render_html(score: Dict, indicators: Dict, analysis: Dict, history: list = N
   </div>
 </section>
 
+{sectors_html}
+
 {history_html}
 
 {INDICATOR_GUIDE_HTML}
+
+{sectors_guide_html}
 
 <footer>
   <p>评分系统由 Aaron 设计，Claude Opus 4.7 生成分析</p>
@@ -644,6 +746,107 @@ footer a:hover { text-decoration: underline; }
   .composite-row { gap: 16px; }
   section { padding: 16px; }
   .dim-grid, .guide-grid { grid-template-columns: 1fr; }
+  .sector-grid { grid-template-columns: repeat(2, 1fr) !important; }
+}
+
+/* === Sectors section === */
+.sectors-section { background: #faf9f3; }
+.sector-rotation {
+  font-size: 14px;
+  margin-bottom: 14px;
+  padding: 10px 14px;
+  background: white;
+  border-radius: 8px;
+  border-left: 3px solid #185FA5;
+}
+.sector-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+}
+.sector-card {
+  background: white;
+  border-radius: 10px;
+  padding: 12px 14px;
+  border-left: 4px solid #ccc;
+  transition: transform 0.15s;
+}
+.sector-card:hover { transform: translateY(-2px); }
+.sector-extreme_oversold { border-left-color: #173404; background: #C0DD97; }
+.sector-oversold { border-left-color: #3B6D11; background: #EAF3DE; }
+.sector-weak { border-left-color: #185FA5; background: #E6F1FB; }
+.sector-neutral_strong { border-left-color: #888780; }
+.sector-strong { border-left-color: #BA7517; background: #FAEEDA; }
+.sector-severe_overbought { border-left-color: #993C1D; background: #FAC775; }
+.sector-extreme_overbought { border-left-color: #501313; background: #F7C1C1; }
+.sector-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+.sector-emoji { font-size: 18px; }
+.sector-score {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+.sector-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #2c2c2a;
+}
+.sector-ticker {
+  font-size: 11px;
+  color: #888780;
+  font-family: monospace;
+  margin-bottom: 6px;
+}
+.sector-label {
+  font-size: 11px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #444441;
+}
+.sector-metrics {
+  font-size: 11px;
+  color: #5f5e5a;
+  font-family: monospace;
+  margin-bottom: 6px;
+}
+.sector-comment {
+  font-size: 12px;
+  color: #2c2c2a;
+  line-height: 1.5;
+  padding-top: 6px;
+  border-top: 0.5px solid rgba(0,0,0,0.1);
+}
+
+/* Sectors guide table */
+.sectors-guide-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin-bottom: 16px;
+}
+.sectors-guide-table th, .sectors-guide-table td {
+  padding: 6px 10px;
+  text-align: left;
+  border-bottom: 0.5px solid rgba(0,0,0,0.08);
+}
+.sectors-guide-table th {
+  background: #f1efe8;
+  font-weight: 500;
+}
+.sectors-guide-table code {
+  background: #f1efe8;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+}
+.components-cell {
+  color: #5f5e5a;
+  font-size: 11px;
 }
 """
 
@@ -653,6 +856,7 @@ if __name__ == "__main__":
     indicators_path = os.environ.get("INDICATORS_FILE", "/tmp/indicators.json")
     score_path = os.environ.get("SCORE_FILE", "/tmp/score.json")
     analysis_path = os.environ.get("ANALYSIS_FILE", "/tmp/analysis.json")
+    sectors_path = os.environ.get("SECTORS_SCORED_FILE", "/tmp/sectors_scored.json")
     history_path = os.environ.get("HISTORY_FILE", "data/history.json")
     out_dir = os.environ.get("OUT_DIR", "/tmp/out")
 
@@ -666,6 +870,14 @@ if __name__ == "__main__":
     with open(analysis_path) as f:
         analysis = json.load(f)
 
+    sectors_scored = None
+    if os.path.exists(sectors_path):
+        try:
+            with open(sectors_path) as f:
+                sectors_scored = json.load(f)
+        except Exception:
+            sectors_scored = None
+
     history = []
     if os.path.exists(history_path):
         try:
@@ -674,7 +886,7 @@ if __name__ == "__main__":
         except Exception:
             history = []
 
-    html = render_html(score, indicators, analysis, history)
+    html = render_html(score, indicators, analysis, history, sectors_scored)
 
     # 写主页
     today = indicators.get("as_of_date", datetime.utcnow().strftime("%Y-%m-%d"))
