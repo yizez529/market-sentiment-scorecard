@@ -1,0 +1,133 @@
+name: Daily Market Sentiment Scorecard
+
+on:
+  # 每天北京时间 10:00 = UTC 02:00
+  # 周一到周六（cron: dow 1-6 = 周一到周六）
+  schedule:
+    - cron: '0 2 * * 1-6'
+  # 允许手动触发，可选择只跑 smoke-test
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Run mode'
+        required: true
+        default: 'full'
+        type: choice
+        options:
+          - smoke-test-only
+          - full
+
+permissions:
+  contents: write   # 推送 history.json 和 docs/
+  pages: write
+  id-token: write
+
+jobs:
+  smoke-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: pip-${{ hashFiles('requirements.txt') }}
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: Check all scripts importable
+        run: |
+          cd scripts
+          python -c "import fetch_indicators, calculate_score, claude_analysis, generate_html, feishu_card, run_daily; print('✅ All imports OK')"
+
+      - name: Check required env vars present
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        run: |
+          if [ -z "$ANTHROPIC_API_KEY" ]; then echo "❌ ANTHROPIC_API_KEY missing"; exit 1; fi
+          if [ -z "$FEISHU_WEBHOOK" ]; then echo "❌ FEISHU_WEBHOOK missing"; exit 1; fi
+          if [ -z "$FRED_API_KEY" ]; then echo "⚠️  FRED_API_KEY missing (HY/IG OAS will be N/A)"; fi
+          echo "✅ Env vars present"
+
+      - name: Test Feishu webhook
+        env:
+          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
+        run: |
+          response=$(curl -s -X POST "$FEISHU_WEBHOOK" \
+            -H 'Content-Type: application/json' \
+            -d '{"msg_type":"text","content":{"text":"[smoke-test] market-sentiment-scorecard deployment OK"}}')
+          echo "Response: $response"
+          echo "$response" | grep -q '"code":0' || (echo "❌ Feishu webhook test failed"; exit 1)
+          echo "✅ Feishu webhook OK"
+
+  scan:
+    needs: smoke-test
+    if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && github.event.inputs.mode == 'full') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: pip-${{ hashFiles('requirements.txt') }}
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: Run daily scorecard
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+          PAGE_URL: https://${{ github.repository_owner }}.github.io/market-sentiment-scorecard/
+        run: python scripts/run_daily.py
+
+      - name: Commit data + docs back to repo
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
+          git add data/history.json docs/
+          if git diff --cached --quiet; then
+            echo "Nothing to commit"
+          else
+            git commit -m "chore(daily): update scorecard $(date -u +%Y-%m-%d)"
+            git push
+          fi
+
+  deploy-pages:
+    needs: scan
+    if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && github.event.inputs.mode == 'full') }}
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./docs
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
