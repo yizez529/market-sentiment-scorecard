@@ -334,4 +334,105 @@ footer a:hover { text-decoration: underline; }
   .composite-row { gap: 16px; }
   section { padding: 16px; }
   .dim-grid, .guide-grid { grid-template-columns: 1fr; }
+  .sector-grid { grid-template-columns: repeat(2, 1fr) !important; }
+}
+
+/* === Sectors section === */
+.sectors-section { background: #faf9f3; }
+.sector-rotation {
+  font-size: 14px;
+  margin-bottom: 14px;
+  padding: 10px 14px;
+  background: white;
+  border-radius: 8px;
+  border-left: 3px solid #185FA5;
+}
+.sector-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+}
+.sector-card {
+  background: white;
+  border-radius: 10px;
+  padding: 12px 14px;
+  border-left: 4px solid #ccc;
+  transition: transform 0.15s;
+}
+.sector-card:hover { transform: translateY(-2px); }
+.sector-extreme_oversold { border-left-color: #173404; background: #C0DD97; }
+.sector-oversold { border-left-color: #3B6D11; background: #EAF3DE; }
+.sector-weak { border-left-color: #185FA5; background: #E6F1FB; }
+.sector-neutral_strong { border-left-color: #888780; }
+.sector-strong { border-left-color: #BA7517; background: #FAEEDA; }
+.sector-severe_overbought { border-left-color: #993C1D; background: #FAC775; }
+.sector-extreme_overbought { border-left-color: #501313; background: #F7C1C1; }
+.sector-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+.sector-emoji { font-size: 18px; }
+.sector-score {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+.sector-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #2c2c2a;
+}
+.sector-ticker {
+  font-size: 11px;
+  color: #888780;
+  font-family: monospace;
+  margin-bottom: 6px;
+}
+.sector-label {
+  font-size: 11px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #444441;
+}
+.sector-metrics {
+  font-size: 11px;
+  color: #5f5e5a;
+  font-family: monospace;
+  margin-bottom: 6px;
+}
+.sector-comment {
+  font-size: 12px;
+  color: #2c2c2a;
+  line-height: 1.5;
+  padding-top: 6px;
+  border-top: 0.5px solid rgba(0,0,0,0.1);
+}
+
+/* Sectors guide table */
+.sectors-guide-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin-bottom: 16px;
+}
+.sectors-guide-table th, .sectors-guide-table td {
+  padding: 6px 10px;
+  text-align: left;
+  border-bottom: 0.5px solid rgba(0,0,0,0.08);
+}
+.sectors-guide-table th {
+  background: #f1efe8;
+  font-weight: 500;
+}
+.sectors-guide-table code {
+  background: #f1efe8;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+}
+.components-cell {
+  color: #5f5e5a;
+  font-size: 11px;
 }
