@@ -54,5 +54,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-05-02",
+    "timestamp_utc": "2026-05-02T05:15:30.924160Z",
+    "composite_score": 84.6,
+    "status_label": "严重超买",
+    "status_zone": "severe_overbought",
+    "dimension_scores": {
+      "volatility": 88.8,
+      "sentiment": 66.6,
+      "spx_breadth": 79.9,
+      "credit": 93.0,
+      "ndx": 82.7,
+      "cta": 100.0,
+      "momentum": 79.9
+    },
+    "headline": "综合 84.6 严重超买，CTA 满仓+信用零溢价，减仓窗口持续",
+    "verdict": "84.6 分 + CTA 顶格 + 信用零溢价 + 双 RSI>78，继续减仓 10-25% 并用便宜 VIX 买保险，禁止追涨 AI 链条。",
+    "key_indicators_snapshot": {
+      "VIX": 16.99,
+      "VXN": 21.92,
+      "SPX": 7230.12,
+      "NDX": 27710.36,
+      "HY_OAS": 283.0,
+      "fear_greed": 66.6,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
