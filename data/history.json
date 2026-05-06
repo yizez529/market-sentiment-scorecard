@@ -138,5 +138,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-05-06",
+    "timestamp_utc": "2026-05-06T05:34:29.027360Z",
+    "composite_score": 83.6,
+    "status_label": "严重超买",
+    "status_zone": "severe_overbought",
+    "dimension_scores": {
+      "volatility": 86.7,
+      "sentiment": 66.9,
+      "spx_breadth": 81.0,
+      "credit": 93.9,
+      "ndx": 80.0,
+      "cta": 100.0,
+      "momentum": 76.3
+    },
+    "headline": "综合 83.6 严重超买，AI 链八板块全部 95+ 极致拥挤",
+    "verdict": "83.6 已逼近 85 大顶阈值，AI 链极度拥挤 + CTA 顶格 + VIX 17，继续兑现利润而非加仓",
+    "key_indicators_snapshot": {
+      "VIX": 17.38,
+      "VXN": 22.46,
+      "SPX": 7259.22,
+      "NDX": 28015.06,
+      "HY_OAS": 278.0,
+      "fear_greed": 66.9,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
