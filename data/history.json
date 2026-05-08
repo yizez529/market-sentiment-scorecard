@@ -194,5 +194,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-05-08",
+    "timestamp_utc": "2026-05-08T04:57:06.953407Z",
+    "composite_score": 83.3,
+    "status_label": "严重超买",
+    "status_zone": "severe_overbought",
+    "dimension_scores": {
+      "volatility": 87.4,
+      "sentiment": 67.6,
+      "spx_breadth": 85.1,
+      "credit": 94.8,
+      "ndx": 76.9,
+      "cta": 100.0,
+      "momentum": 71.5
+    },
+    "headline": "综合 83.3 仍处严重超买，AI 链拥挤但顶部边际松动",
+    "verdict": "83.3 仍是减仓而非加仓区，趁 VIX 17 建对冲、AI 链获利了结，等回踩 50MA + 广度修复再行动",
+    "key_indicators_snapshot": {
+      "VIX": 17.08,
+      "VXN": 23.15,
+      "SPX": 7337.11,
+      "NDX": 28563.95,
+      "HY_OAS": 275.0,
+      "fear_greed": 67.6,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
