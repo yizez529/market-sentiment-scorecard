@@ -131,7 +131,7 @@ def get_zone_class(zone: str) -> str:
     return f"zone-{zone.replace('_', '-')}"
 
 
-def render_html(score: Dict, indicators: Dict, analysis: Dict, history: list = None, sectors_scored: Dict = None) -> str:
+def render_html(score: Dict, indicators: Dict, analysis: Dict, history: list = None, sectors_scored: Dict = None, temperatures: Dict = None) -> str:
     """生成完整 HTML"""
     today = score.get("as_of", indicators.get("as_of_date", datetime.utcnow().strftime("%Y-%m-%d")))
     composite = score["composite_score"]
@@ -218,6 +218,31 @@ def render_html(score: Dict, indicators: Dict, analysis: Dict, history: list = N
                 metrics_line_parts.append(f"3M RS {rs_3m:+.1f}%")
             metrics_line = " · ".join(metrics_line_parts)
 
+            # 温度标签
+            temp_html = ""
+            if temperatures and sec["key"] in temperatures:
+                t = temperatures[sec["key"]]
+                temp_emoji = t.get("emoji", "")
+                temp_label = t.get("label", "")
+                # 温度详情
+                temp_details_parts = []
+                raw = t.get("raw", {})
+                if raw.get("forward_pe") is not None:
+                    temp_details_parts.append(f"PE {raw['forward_pe']:.1f}x")
+                if raw.get("forward_pe_zscore") is not None:
+                    temp_details_parts.append(f"z={raw['forward_pe_zscore']:+.1f}")
+                if raw.get("eps_revision_3m_pct") is not None:
+                    temp_details_parts.append(f"EPS rev {raw['eps_revision_3m_pct']:+.1f}%")
+                if raw.get("peg") is not None:
+                    temp_details_parts.append(f"PEG {raw['peg']:.1f}")
+                temp_details = " · ".join(temp_details_parts)
+                temp_html = f"""
+                <div class="sector-temperature temp-{t.get('code', 'fair')}">
+                  {temp_emoji} {temp_label}
+                  {f'<div class="temp-details">{temp_details}</div>' if temp_details else ''}
+                </div>
+                """
+
             cards_html += f"""
             <div class="sector-card sector-{zone}">
               <div class="sector-header">
@@ -228,6 +253,7 @@ def render_html(score: Dict, indicators: Dict, analysis: Dict, history: list = N
               <div class="sector-ticker">{sec['ticker_or_basket']}</div>
               <div class="sector-label">{s['label']}</div>
               <div class="sector-metrics">{metrics_line}</div>
+              {temp_html}
               {f'<div class="sector-comment">💭 {comment}</div>' if comment and comment != "N/A" else ''}
             </div>
             """
@@ -284,6 +310,38 @@ def render_html(score: Dict, indicators: Dict, analysis: Dict, history: list = N
     <li><strong>趋势 (40%)</strong>：板块价格距 200MA 偏离 + 距 50MA 偏离</li>
     <li><strong>动量 (30%)</strong>：14 日 RSI + 5 日变化率 + 20 日变化率</li>
     <li><strong>相对强度 (30%)</strong>：相对 benchmark（多数 vs SPY，部分 vs QQQ 或 vs IBIT）的 1 月超额 + 3 月超额</li>
+  </ul>
+
+  <h3 style="margin-top:20px;">🌡️ 基本面温度（与技术评分正交）</h3>
+  <p class="guide-intro">基本面温度是<strong>独立于 0-100 技术评分的标签</strong>，不混入综合分。设计目的是解决"严重超买能否继续超买"的问题——技术超买在基本面跟得上的情况下（2024 AI/GLP-1）vs 基本面恶化（1999 末期）有完全不同的处理方式。</p>
+  <table class="zone-table">
+    <thead><tr><th>温度</th><th>含义</th><th>条件</th><th>典型对应</th></tr></thead>
+    <tbody>
+      <tr><td>🔥 基本面加速</td><td>超买中能继续超买</td><td>EPS 3M revision &gt;+5% 或 PEG&lt;1.5+PE z&lt;+0.5</td><td>2024H1 AI/GLP-1</td></tr>
+      <tr><td>📈 估值合理</td><td>涨得有道理</td><td>PE z 中性、EPS 平稳</td><td>大部分时间</td></tr>
+      <tr><td>⚠️ 估值 stretched</td><td>涨的是估值不是基本面</td><td>PE z &gt;+1.5σ，EPS 不再加速</td><td>2024Q4 一些 AI 二线票</td></tr>
+      <tr><td>🚨 估值+EPS 双背离</td><td>1999/2021 末期模式</td><td>PE z &gt;+2σ + EPS 在下修</td><td>2000/3 互联网、2021/12 SaaS</td></tr>
+      <tr><td>❓ 数据不足</td><td>无传统 PE 概念</td><td>多数公司亏损/BTC 资产</td><td>量子/Neocloud/BTC</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin-top:20px;">🎯 技术分数 × 温度交叉判断</h3>
+  <table class="zone-table">
+    <thead><tr><th>技术评分</th><th>温度</th><th>建议动作</th></tr></thead>
+    <tbody>
+      <tr><td>80-95（严重超买）</td><td>🔥 加速</td><td>不要追涨但<strong>不必减仓</strong>（基本面跟得上）</td></tr>
+      <tr><td>80-95（严重超买）</td><td>⚠️/🚨</td><td><strong>减仓 10-25%</strong>（涨的是估值，迟早 compression）</td></tr>
+      <tr><td>30-50（偏弱）</td><td>🔥 加速</td><td><strong>抄底好机会</strong>（超卖叠加基本面加速）</td></tr>
+      <tr><td>30-50（偏弱）</td><td>🚨</td><td><strong>不要急着抄</strong>（基本面恶化中的弱反弹陷阱）</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin-top:20px;">📊 基本面数据源</h3>
+  <ul class="caveats">
+    <li><strong>ETF 板块</strong>：yfinance ETF info["forwardPE"]（直接拿 ETF 整体 PE）</li>
+    <li><strong>Basket 板块</strong>：FMP analyst-estimates 端点 → 每 ticker forward EPS → 等权 basket forward PE</li>
+    <li><strong>z-score 基准</strong>：前 60 天用 sectors_pe_benchmarks 表（5Y 历史均值）；60 天后切换到累积真实历史</li>
+    <li><strong>EPS revision 3M</strong>：需要累积历史 ≥ 90 天才有值，初期会显示 N/A</li>
   </ul>
 </section>
 """
@@ -822,6 +880,27 @@ footer a:hover { text-decoration: underline; }
   border-top: 0.5px solid rgba(0,0,0,0.1);
 }
 
+/* 基本面温度 */
+.sector-temperature {
+  font-size: 11px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+.temp-accelerating { background: #FAEEDA; color: #993C1D; border-left: 3px solid #993C1D; }
+.temp-fair { background: #E6F1FB; color: #185FA5; border-left: 3px solid #185FA5; }
+.temp-warning { background: #FAC775; color: #854F0B; border-left: 3px solid #854F0B; }
+.temp-danger { background: #F7C1C1; color: #791F1F; border-left: 3px solid #791F1F; }
+.temp-no_data { background: #f1efe8; color: #888780; border-left: 3px solid #ccc; }
+.temp-details {
+  font-size: 10px;
+  font-family: monospace;
+  font-weight: 400;
+  margin-top: 2px;
+  opacity: 0.85;
+}
+
 /* Sectors guide table */
 .sectors-guide-table {
   width: 100%;
@@ -857,6 +936,7 @@ if __name__ == "__main__":
     score_path = os.environ.get("SCORE_FILE", "/tmp/score.json")
     analysis_path = os.environ.get("ANALYSIS_FILE", "/tmp/analysis.json")
     sectors_path = os.environ.get("SECTORS_SCORED_FILE", "/tmp/sectors_scored.json")
+    temperatures_path = os.environ.get("TEMPERATURES_FILE", "/tmp/temperatures.json")
     history_path = os.environ.get("HISTORY_FILE", "data/history.json")
     out_dir = os.environ.get("OUT_DIR", "/tmp/out")
 
@@ -878,6 +958,14 @@ if __name__ == "__main__":
         except Exception:
             sectors_scored = None
 
+    temperatures = None
+    if os.path.exists(temperatures_path):
+        try:
+            with open(temperatures_path) as f:
+                temperatures = json.load(f)
+        except Exception:
+            temperatures = None
+
     history = []
     if os.path.exists(history_path):
         try:
@@ -886,7 +974,7 @@ if __name__ == "__main__":
         except Exception:
             history = []
 
-    html = render_html(score, indicators, analysis, history, sectors_scored)
+    html = render_html(score, indicators, analysis, history, sectors_scored, temperatures)
 
     # 写主页
     today = indicators.get("as_of_date", datetime.utcnow().strftime("%Y-%m-%d"))

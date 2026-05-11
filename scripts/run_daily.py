@@ -17,6 +17,8 @@ from fetch_indicators import fetch_all
 from calculate_score import calculate_composite
 from fetch_sectors import fetch_all_sectors
 from score_sectors import score_all_sectors
+from fetch_fundamentals import fetch_all_fundamentals
+from fundamentals_temperature import classify_all_sectors
 from claude_analysis import call_claude
 from generate_html import render_html, CSS
 from feishu_card import build_card, send_to_feishu
@@ -136,6 +138,65 @@ def main():
         traceback.print_exc()
         # 不阻塞主流程
 
+    # === 2c. Fetch fundamentals & classify temperatures ===
+    print("\n" + "=" * 60)
+    print("STEP 2c: Fetch fundamentals & classify temperatures")
+    print("=" * 60)
+    temperatures = None
+    fundamentals_history_path = str(data_dir / "fundamentals_history.json")
+    fundamentals_history = []
+    if os.path.exists(fundamentals_history_path):
+        try:
+            with open(fundamentals_history_path) as f:
+                fundamentals_history = json.load(f)
+        except Exception:
+            fundamentals_history = []
+
+    try:
+        fundamentals = fetch_all_fundamentals(fundamentals_history)
+        fundamentals_file = "/tmp/fundamentals.json"
+        with open(fundamentals_file, "w") as f:
+            json.dump(fundamentals, f, indent=2, default=str)
+
+        temperatures = classify_all_sectors(fundamentals)
+        temperatures_file = "/tmp/temperatures.json"
+        with open(temperatures_file, "w") as f:
+            json.dump(temperatures, f, indent=2, ensure_ascii=False)
+
+        # 累积到历史（用于以后算 z-score 和 EPS revision）
+        snapshot = {
+            "as_of_date": fundamentals["as_of_date"],
+            "timestamp_utc": fundamentals["timestamp_utc"],
+            "sectors": {
+                k: {
+                    "forward_pe": v.get("forward_pe"),
+                    "avg_eps_estimate": v.get("avg_eps_estimate"),
+                    "eps_growth_pct": v.get("eps_growth_pct"),
+                    "peg": v.get("peg"),
+                }
+                for k, v in fundamentals["sectors"].items()
+            },
+        }
+        # 同日覆盖
+        fundamentals_history = [h for h in fundamentals_history if h.get("as_of_date") != snapshot["as_of_date"]]
+        fundamentals_history.append(snapshot)
+        # 排序 + 留 1.5 年（确保有 90+ 天历史）
+        fundamentals_history = sorted(fundamentals_history, key=lambda x: x.get("as_of_date", ""))[-540:]
+        with open(fundamentals_history_path, "w") as f:
+            json.dump(fundamentals_history, f, indent=2, ensure_ascii=False)
+
+        print(f"\n温度分布:")
+        from collections import Counter
+        codes = Counter(t["code"] for t in temperatures.values())
+        for code, n in codes.most_common():
+            emoji_first = next(t["emoji"] for t in temperatures.values() if t["code"] == code)
+            print(f"  {emoji_first} {code:15s}: {n} 个")
+        print(f"基本面历史累积: {len(fundamentals_history)} 天")
+    except Exception as e:
+        print(f"⚠️  Fundamentals step failed: {e}")
+        traceback.print_exc()
+        # 不阻塞主流程
+
     # === 3. Claude analysis ===
     print("\n" + "=" * 60)
     print("STEP 3: Claude Opus 4.7 analysis")
@@ -151,7 +212,7 @@ def main():
             pass
 
     try:
-        analysis = call_claude(indicators, score, history_for_context, sectors_scored)
+        analysis = call_claude(indicators, score, history_for_context, sectors_scored, temperatures)
     except Exception as e:
         print(f"❌ Claude failed: {e}")
         traceback.print_exc()
@@ -195,7 +256,7 @@ def main():
     print("\n" + "=" * 60)
     print("STEP 5: Generate HTML dashboard")
     print("=" * 60)
-    html = render_html(score, indicators, analysis, history, sectors_scored)
+    html = render_html(score, indicators, analysis, history, sectors_scored, temperatures)
     today = indicators.get("as_of_date", datetime.utcnow().strftime("%Y-%m-%d"))
 
     with open(docs_dir / "index.html", "w", encoding="utf-8") as f:
@@ -213,7 +274,7 @@ def main():
     if webhook:
         # 完整 archive URL（指向当日，确保历史链接也有效）
         archive_url = f"{page_url.rstrip('/')}/archive/{today}.html"
-        card = build_card(score, analysis, indicators, archive_url, sectors_scored)
+        card = build_card(score, analysis, indicators, archive_url, sectors_scored, temperatures)
         result = send_to_feishu(webhook, card)
         if result.get("code") == 0:
             print("✅ Feishu pushed successfully")

@@ -44,18 +44,20 @@ jobs:
       - name: Check all scripts importable
         run: |
           cd scripts
-          python -c "import fetch_indicators, calculate_score, claude_analysis, generate_html, feishu_card, run_daily, sectors_config, fetch_sectors, score_sectors; print('✅ All imports OK (含 3 个 sector 脚本)')"
+          python -c "import fetch_indicators, calculate_score, claude_analysis, generate_html, feishu_card, run_daily, sectors_config, fetch_sectors, score_sectors, sectors_pe_benchmarks, fetch_fundamentals, fundamentals_temperature; print('✅ All 12 scripts import OK')"
 
       - name: Check required env vars present
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
         run: |
           if [ -z "$ANTHROPIC_API_KEY" ]; then echo "❌ ANTHROPIC_API_KEY missing"; exit 1; fi
           if [ -z "$FEISHU_WEBHOOK" ]; then echo "❌ FEISHU_WEBHOOK missing"; exit 1; fi
           if [ -z "$FRED_API_KEY" ]; then echo "⚠️  FRED_API_KEY missing (HY/IG OAS will be N/A)"; fi
-          echo "✅ Env vars present"
+          if [ -z "$FMP_API_KEY" ]; then echo "⚠️  FMP_API_KEY missing (Basket 板块基本面温度将为❓)"; fi
+          echo "✅ Required env vars present"
 
       - name: Test Feishu webhook
         env:
@@ -93,6 +95,7 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
           PAGE_URL: https://${{ github.repository_owner }}.github.io/market-sentiment-scorecard/
         run: python scripts/run_daily.py
 

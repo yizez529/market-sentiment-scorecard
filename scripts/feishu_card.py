@@ -30,8 +30,8 @@ def emoji_for_score(score: float) -> str:
     return "🟢🟢"
 
 
-def build_card(score: Dict, analysis: Dict, indicators: Dict, page_url: str, sectors_scored: Dict = None) -> Dict:
-    """构造飞书互动卡片（含板块 Top 5+5 面板）"""
+def build_card(score: Dict, analysis: Dict, indicators: Dict, page_url: str, sectors_scored: Dict = None, temperatures: Dict = None) -> Dict:
+    """构造飞书互动卡片（含板块 Top 5+5 面板 + 基本面温度）"""
     composite = score["composite_score"]
     status_label = score["status_label"]
     zone = score["status_zone"]
@@ -160,13 +160,16 @@ def build_card(score: Dict, analysis: Dict, indicators: Dict, page_url: str, sec
             rotation_md += f"\n_{sector_rotation}_"
         elements.append({"tag": "div", "text": {"tag": "lark_md", "content": rotation_md}})
 
-        # 最超买 5 个（每行：emoji 板块名 评分 标签 + 一句简评）
+        # 最超买 5 个（每行：emoji 板块名 评分 标签 + 温度 + 简评）
         ob_lines = ["**🔥 最超买 Top 5**"]
         for s in top5_ob:
             sec = s["sector"]
             comment = sector_comments.get(sec["key"], "")
+            temp_emoji = ""
+            if temperatures and sec["key"] in temperatures:
+                temp_emoji = f" {temperatures[sec['key']].get('emoji', '')}"
             ob_lines.append(
-                f"{s['emoji']} **{sec['name_zh']}** ({sec['ticker_or_basket']}) **{s['composite']:.0f}** {s['label']}"
+                f"{s['emoji']} **{sec['name_zh']}** ({sec['ticker_or_basket']}) **{s['composite']:.0f}** {s['label']}{temp_emoji}"
             )
             if comment and comment not in ("N/A", ""):
                 ob_lines.append(f"   💭 {comment}")
@@ -177,8 +180,11 @@ def build_card(score: Dict, analysis: Dict, indicators: Dict, page_url: str, sec
         for s in top5_os:
             sec = s["sector"]
             comment = sector_comments.get(sec["key"], "")
+            temp_emoji = ""
+            if temperatures and sec["key"] in temperatures:
+                temp_emoji = f" {temperatures[sec['key']].get('emoji', '')}"
             os_lines.append(
-                f"{s['emoji']} **{sec['name_zh']}** ({sec['ticker_or_basket']}) **{s['composite']:.0f}** {s['label']}"
+                f"{s['emoji']} **{sec['name_zh']}** ({sec['ticker_or_basket']}) **{s['composite']:.0f}** {s['label']}{temp_emoji}"
             )
             if comment and comment not in ("N/A", ""):
                 os_lines.append(f"   💭 {comment}")
@@ -255,6 +261,7 @@ if __name__ == "__main__":
     analysis_path = os.environ.get("ANALYSIS_FILE", "/tmp/analysis.json")
     indicators_path = os.environ.get("INDICATORS_FILE", "/tmp/indicators.json")
     sectors_path = os.environ.get("SECTORS_SCORED_FILE", "/tmp/sectors_scored.json")
+    temperatures_path = os.environ.get("TEMPERATURES_FILE", "/tmp/temperatures.json")
     page_url = os.environ.get(
         "PAGE_URL",
         "https://github.com/yizez529/market-sentiment-scorecard"
@@ -274,10 +281,18 @@ if __name__ == "__main__":
         try:
             with open(sectors_path) as f:
                 sectors_scored = json.load(f)
-        except Exception as e:
-            print(f"  [sectors] failed to load: {e}")
+        except Exception:
+            pass
 
-    card = build_card(score, analysis, indicators, page_url, sectors_scored)
+    temperatures = None
+    if os.path.exists(temperatures_path):
+        try:
+            with open(temperatures_path) as f:
+                temperatures = json.load(f)
+        except Exception:
+            pass
+
+    card = build_card(score, analysis, indicators, page_url, sectors_scored, temperatures)
     result = send_to_feishu(webhook, card)
     if result.get("code") == 0 or result.get("code") is None:
         print("✅ Feishu card sent")

@@ -46,6 +46,20 @@ SYSTEM_PROMPT = """你是 Aaron 的美股市场情绪分析师。Aaron 是资深
 - 50-65: 中性偏强  - 65-80: 偏强/持有       - 80-92: 严重超买/减仓
 - 92-100: 极度超买
 
+# 板块基本面温度（与技术评分正交，不混算）：
+每个板块除了技术评分，还有一个【基本面温度】标签：
+- 🔥 基本面加速：EPS 大幅上修 / 高增长低 PEG。即使技术超买也能继续超买（2024 AI/GLP-1 模式）
+- 📈 估值合理：Forward PE z 中性、EPS 平稳。涨得有道理
+- ⚠️ 估值 stretched：Forward PE z > +1.5σ 但 EPS 不再加速。涨的是估值不是基本面
+- 🚨 估值+EPS 双背离：Forward PE z > +2σ 且 EPS 在下修。1999/2021 末期模式，危险
+- ❓ 数据不足：量子/Neocloud/BTC 等无传统 PE 概念的板块
+
+**关键交叉判断**：
+- 技术 80-95 + 🔥 → 不要追涨但不必减仓（基本面跟得上）
+- 技术 80-95 + ⚠️/🚨 → 减仓（涨的是估值，迟早 multiple compression）
+- 技术 30-50 + 🔥 → 抄底好机会（超卖叠加基本面加速）
+- 技术 30-50 + 🚨 → 不要急着抄（基本面恶化中的弱反弹陷阱）
+
 # 输出要求（严格 JSON，禁止 markdown fence 或前言）：
 {
   "headline": "一句话总结 (15-25 字)，包含分数和状态",
@@ -69,10 +83,10 @@ SYSTEM_PROMPT = """你是 Aaron 的美股市场情绪分析师。Aaron 是资深
   "next_to_watch": ["未来 3-7 天关键事件 / 数据 / 触发位"],
   "verdict": "一句给 Aaron 的最终决断（25-40 字）",
   "sector_comments": {
-    "<sector_key>": "一句板块简评（20-40 字），点出关键驱动或风险",
+    "<sector_key>": "一句板块简评（25-50 字），**必须结合技术评分 + 基本面温度做综合判断**，给 actionable 建议",
     "...": "对每一个传入的板块都要给一句简评"
   },
-  "sector_rotation_summary": "一句话总结当期板块轮动主旋律（30-60 字），如：'AI/Neocloud 极致超买，能源/中概深度超卖，资金从 Tech 向 Defensive 轮动初现'"
+  "sector_rotation_summary": "一句话总结当期板块轮动主旋律（30-60 字），举例：'AI 半导体超买但 🔥 基本面跟得上不必减；量子超买且 🚨 EPS 下修建议减仓'"
 }
 
 # 风格要求：
@@ -81,7 +95,10 @@ SYSTEM_PROMPT = """你是 Aaron 的美股市场情绪分析师。Aaron 是资深
 - 引用历史可比时点（如 "类似 2025/4 但更温和"）
 - 不要重复 Aaron 已知的框架内容
 - 中文输出，但保留英文专业术语（VIX, F&G, OAS, CTA, RSI, MA, ETF 名等不翻译）
-- 板块简评必须 actionable，不要泛泛而谈（坏例："AI 半导体走强" / 好例："SMH RSI 78 + 距 200MA +22%，CTA 已满仓，等回踩 50MA 再加仓而非追涨"）
+- **板块简评必须 actionable**，必须结合"技术分数 + 温度标签"做交叉判断：
+  好例：'SMH 92 严重超买但 🔥（EPS revision +12%/PEG 0.9）—— 类似 2024H1，不追涨但不减仓'
+  好例：'量子 88 严重超买且 🚨（PE z+2.5σ + EPS 下修）—— 1999 模式减仓 25%'
+  坏例：'AI 半导体走强'（无信息量）
 
 # 严格规则：
 - 只输出一个有效 JSON 对象，不要任何前言、解释、markdown fence
@@ -91,23 +108,22 @@ SYSTEM_PROMPT = """你是 Aaron 的美股市场情绪分析师。Aaron 是资深
 """
 
 
-def call_claude(indicators: Dict, score: Dict, history: Dict = None, sectors_scored: Dict = None) -> Dict[str, Any]:
-    """调用 Opus 4.7 生成分析（含板块简评）"""
+def call_claude(indicators: Dict, score: Dict, history: Dict = None, sectors_scored: Dict = None, temperatures: Dict = None) -> Dict[str, Any]:
+    """调用 Opus 4.7 生成分析（含板块简评 + 基本面温度）"""
     api_key = os.environ.get("ANTHROPIC_API_KEY")
     if not api_key:
         raise RuntimeError("ANTHROPIC_API_KEY missing")
 
     client = anthropic.Anthropic(api_key=api_key)
 
-    # 构造用户消息
     today = datetime.utcnow().strftime("%Y-%m-%d")
 
-    # 板块数据精简版给 LLM（只传必要字段，节省 token）
     sectors_compact = []
     if sectors_scored and "all_scored" in sectors_scored:
         for s in sectors_scored["all_scored"]:
-            sectors_compact.append({
-                "key": s["sector"]["key"],
+            sec_key = s["sector"]["key"]
+            payload = {
+                "key": sec_key,
                 "name_zh": s["sector"]["name_zh"],
                 "ticker": s["sector"]["ticker_or_basket"],
                 "components": s["sector"]["components"],
@@ -120,7 +136,21 @@ def call_claude(indicators: Dict, score: Dict, history: Dict = None, sectors_sco
                 "ma50_dist": s["raw_metrics"].get("ma50_dist_pct"),
                 "rsi14": s["raw_metrics"].get("rsi14"),
                 "rs_3m": s["raw_metrics"].get("rs_3m_vs_bm"),
-            })
+            }
+            # 加基本面温度
+            if temperatures and sec_key in temperatures:
+                t = temperatures[sec_key]
+                payload["temperature"] = {
+                    "emoji": t.get("emoji"),
+                    "label": t.get("label"),
+                    "code": t.get("code"),
+                    "explanation": t.get("explanation"),
+                    "forward_pe": t.get("raw", {}).get("forward_pe"),
+                    "forward_pe_zscore": t.get("raw", {}).get("forward_pe_zscore"),
+                    "eps_revision_3m_pct": t.get("raw", {}).get("eps_revision_3m_pct"),
+                    "peg": t.get("raw", {}).get("peg"),
+                }
+            sectors_compact.append(payload)
 
     user_payload = {
         "today": today,
@@ -277,6 +307,7 @@ if __name__ == "__main__":
     indicators_path = os.environ.get("INDICATORS_FILE", "/tmp/indicators.json")
     score_path = os.environ.get("SCORE_FILE", "/tmp/score.json")
     sectors_path = os.environ.get("SECTORS_SCORED_FILE", "/tmp/sectors_scored.json")
+    temperatures_path = os.environ.get("TEMPERATURES_FILE", "/tmp/temperatures.json")
     history_path = os.environ.get("HISTORY_FILE", "data/history.json")
     out_path = os.environ.get("OUTPUT_FILE", "/tmp/analysis.json")
 
@@ -293,6 +324,14 @@ if __name__ == "__main__":
         except Exception as e:
             print(f"  [sectors] failed to load: {e}")
 
+    temperatures = None
+    if os.path.exists(temperatures_path):
+        try:
+            with open(temperatures_path) as f:
+                temperatures = json.load(f)
+        except Exception as e:
+            print(f"  [temperatures] failed to load: {e}")
+
     history = None
     if os.path.exists(history_path):
         try:
@@ -304,7 +343,7 @@ if __name__ == "__main__":
             print(f"  [history] failed to load: {e}")
 
     try:
-        result = call_claude(indicators, score, history, sectors_scored)
+        result = call_claude(indicators, score, history, sectors_scored, temperatures)
         with open(out_path, "w") as f:
             json.dump(result, f, indent=2, ensure_ascii=False)
         print(f"\n✅ Analysis saved to {out_path}")
