@@ -200,6 +200,7 @@ def fetch_all_sectors() -> Dict[str, Any]:
         "timestamp_utc": datetime.utcnow().isoformat() + "Z",
         "as_of_date": datetime.utcnow().strftime("%Y-%m-%d"),
         "sectors": results,
+        "_price_data": price_data,  # 供 score_sectors 计算 per-stock top3 用，不写入 JSON
     }
 
 

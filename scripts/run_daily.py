@@ -117,11 +117,12 @@ def main():
     sectors_scored = None
     try:
         sectors_data = fetch_all_sectors()
+        price_data = sectors_data.pop("_price_data", None)  # 取出不写 JSON
         sectors_file = "/tmp/sectors.json"
         with open(sectors_file, "w") as f:
             json.dump(sectors_data, f, indent=2, default=str)
 
-        sectors_scored = score_all_sectors(sectors_data)
+        sectors_scored = score_all_sectors(sectors_data, price_data)  # 传 price_data 算 top3
         sectors_scored_file = "/tmp/sectors_scored.json"
         with open(sectors_scored_file, "w") as f:
             json.dump(sectors_scored, f, indent=2, ensure_ascii=False)

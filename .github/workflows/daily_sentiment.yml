@@ -2,9 +2,10 @@ name: Daily Market Sentiment Scorecard
 
 on:
   # 每天北京时间 10:00 = UTC 02:00
-  # 周一到周六（cron: dow 1-6 = 周一到周六）
+  # 周二到周六（cron dow 2-6），对应美股周一到周五收盘后数据
+  # 周一 UTC 02:00 时美股尚未开盘，数据等同周六——因此跳过周一
   schedule:
-    - cron: '0 2 * * 1-6'
+    - cron: '0 2 * * 2-6'
   # 允许手动触发，可选择只跑 smoke-test
   workflow_dispatch:
     inputs:

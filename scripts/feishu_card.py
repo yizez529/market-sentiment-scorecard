@@ -160,7 +160,7 @@ def build_card(score: Dict, analysis: Dict, indicators: Dict, page_url: str, sec
             rotation_md += f"\n_{sector_rotation}_"
         elements.append({"tag": "div", "text": {"tag": "lark_md", "content": rotation_md}})
 
-        # 最超买 5 个（每行：emoji 板块名 评分 标签 + 温度 + 简评）
+        # 最超买 5 个
         ob_lines = ["**🔥 最超买 Top 5**"]
         for s in top5_ob:
             sec = s["sector"]
@@ -173,6 +173,15 @@ def build_card(score: Dict, analysis: Dict, indicators: Dict, page_url: str, sec
             )
             if comment and comment not in ("N/A", ""):
                 ob_lines.append(f"   💭 {comment}")
+            # top3 操作候选
+            picks = s.get("top3_picks", [])
+            if picks:
+                action_emoji = picks[0].get("action_emoji", "")
+                picks_str = "  ".join(
+                    f"`{p['ticker']}` RSI {p['rsi14']:.0f}" if p.get("rsi14") else f"`{p['ticker']}`"
+                    for p in picks
+                )
+                ob_lines.append(f"   {action_emoji} {picks[0].get('action_label','')}: {picks_str}")
         elements.append({"tag": "div", "text": {"tag": "lark_md", "content": "\n".join(ob_lines)}})
 
         # 最超卖 5 个
@@ -188,6 +197,15 @@ def build_card(score: Dict, analysis: Dict, indicators: Dict, page_url: str, sec
             )
             if comment and comment not in ("N/A", ""):
                 os_lines.append(f"   💭 {comment}")
+            # top3 操作候选
+            picks = s.get("top3_picks", [])
+            if picks:
+                action_emoji = picks[0].get("action_emoji", "")
+                picks_str = "  ".join(
+                    f"`{p['ticker']}` RSI {p['rsi14']:.0f}" if p.get("rsi14") else f"`{p['ticker']}`"
+                    for p in picks
+                )
+                os_lines.append(f"   {action_emoji} {picks[0].get('action_label','')}: {picks_str}")
         elements.append({"tag": "div", "text": {"tag": "lark_md", "content": "\n".join(os_lines)}})
 
         elements.append({"tag": "hr"})

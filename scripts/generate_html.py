@@ -131,6 +131,27 @@ def get_zone_class(zone: str) -> str:
     return f"zone-{zone.replace('_', '-')}"
 
 
+def _render_top3_html(picks: list) -> str:
+    """渲染板块 top3 操作候选的 HTML"""
+    if not picks:
+        return ""
+    action_label = picks[0].get("action_label", "")
+    action_emoji = picks[0].get("action_emoji", "")
+    rows = ""
+    for p in picks:
+        rsi = f"RSI {p['rsi14']:.0f}" if p.get("rsi14") else ""
+        ma = f"MA200 {p['ma200_dist_pct']:+.1f}%" if p.get("ma200_dist_pct") is not None else ""
+        ret = f"20d {p['ret_20d']:+.1f}%" if p.get("ret_20d") is not None else ""
+        detail = " · ".join(x for x in [rsi, ma, ret] if x)
+        rows += f'<li><strong>{p["ticker"]}</strong> <span class="pick-detail">{detail}</span></li>'
+    return f"""
+    <div class="sector-picks">
+      <div class="picks-label">{action_emoji} {action_label}</div>
+      <ul class="picks-list">{rows}</ul>
+    </div>
+    """
+
+
 def render_html(score: Dict, indicators: Dict, analysis: Dict, history: list = None, sectors_scored: Dict = None, temperatures: Dict = None) -> str:
     """生成完整 HTML"""
     today = score.get("as_of", indicators.get("as_of_date", datetime.utcnow().strftime("%Y-%m-%d")))
@@ -255,6 +276,7 @@ def render_html(score: Dict, indicators: Dict, analysis: Dict, history: list = N
               <div class="sector-metrics">{metrics_line}</div>
               {temp_html}
               {f'<div class="sector-comment">💭 {comment}</div>' if comment and comment != "N/A" else ''}
+              {_render_top3_html(s.get("top3_picks", []))}
             </div>
             """
 
@@ -899,6 +921,32 @@ footer a:hover { text-decoration: underline; }
   font-weight: 400;
   margin-top: 2px;
   opacity: 0.85;
+}
+
+/* Top3 操作候选 */
+.sector-picks {
+  padding-top: 6px;
+  border-top: 0.5px solid rgba(0,0,0,0.1);
+  margin-top: 6px;
+}
+.picks-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: #444441;
+  margin-bottom: 4px;
+}
+.picks-list {
+  list-style: none;
+  font-size: 11px;
+  color: #2c2c2a;
+}
+.picks-list li {
+  padding: 1px 0;
+}
+.pick-detail {
+  font-family: monospace;
+  color: #888780;
+  font-size: 10px;
 }
 
 /* Sectors guide table */

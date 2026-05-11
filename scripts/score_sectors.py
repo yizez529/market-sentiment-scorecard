@@ -18,7 +18,11 @@ score_sectors.py
 """
 import json
 import os
-from typing import Dict, Any, Tuple
+from typing import Dict, Any, Tuple, List, Optional
+
+import numpy as np
+
+from sectors_config import SECTORS
 
 
 def linear_score(value, low: float, high: float, invert: bool = False) -> float:
@@ -135,6 +139,123 @@ def label_for_score(score: float) -> Dict[str, str]:
 WEIGHTS = {"trend": 0.4, "momentum": 0.3, "relative_strength": 0.3}
 
 
+# ========== 辅助计算（per-stock 指标用，不依赖 fetch_sectors）==========
+
+def compute_rsi(closes, period: int = 14) -> Optional[float]:
+    delta = closes.diff().dropna()
+    if len(delta) < period:
+        return None
+    gain = delta.where(delta > 0, 0).rolling(period).mean()
+    loss = -delta.where(delta < 0, 0).rolling(period).mean()
+    rs = gain / loss.replace(0, np.nan)
+    rsi = 100 - 100 / (1 + rs)
+    val = rsi.iloc[-1]
+    return None if (hasattr(val, '__class__') and val != val) else round(float(val), 2)
+
+
+def compute_ma_distance(closes, n: int) -> Optional[float]:
+    if len(closes) < n:
+        return None
+    ma = closes.rolling(n).mean().iloc[-1]
+    if ma == 0 or ma != ma:
+        return None
+    return round((closes.iloc[-1] / ma - 1) * 100, 2)
+
+
+def compute_pct_change(closes, days: int) -> Optional[float]:
+    if len(closes) <= days:
+        return None
+    past = closes.iloc[-days - 1]
+    if past == 0:
+        return None
+    return round((closes.iloc[-1] / past - 1) * 100, 2)
+
+
+# ========== Per-stock 评分 ==========
+
+def score_single_stock(ticker: str, price_data) -> Optional[Dict]:
+    """
+    对单只股票算简化的情绪分数（RSI + MA 距离 + 20日变化率）
+    返回：{ticker, rsi14, ma200_dist, ma50_dist, ret_20d, score_raw}
+    """
+    if ticker not in price_data.columns:
+        return None
+    closes = price_data[ticker].dropna()
+    if len(closes) < 50:
+        return None
+
+    rsi = compute_rsi(closes, 14)
+    ma200_dist = compute_ma_distance(closes, 200)
+    ma50_dist = compute_ma_distance(closes, 50)
+    ret_20d = compute_pct_change(closes, 20)
+
+    # 综合极值分：RSI (0-100) + MA dist 线性映射
+    rsi_score = rsi if rsi else 50
+    ma200_score = linear_score(ma200_dist, -15, 15) if ma200_dist else 50
+    # 简单等权综合
+    raw = (rsi_score * 0.5 + ma200_score * 0.5)
+
+    return {
+        "ticker": ticker,
+        "rsi14": rsi,
+        "ma200_dist_pct": ma200_dist,
+        "ma50_dist_pct": ma50_dist,
+        "ret_20d": ret_20d,
+        "score_raw": round(raw, 1),
+    }
+
+
+def get_top3_picks(sector_key: str, sector_score: float, key_stocks: List[str], price_data) -> List[Dict]:
+    """
+    根据板块分数决定"操作方向"，然后选最具代表性的 3 只。
+
+    超买板块（>65）：选最 stretched 的 3 只（减仓候选）
+      → 按 score_raw 降序，最高的最 stretched
+    超卖板块（<35）：选最被砸的 3 只（买入候选）
+      → 按 score_raw 升序，最低的最超卖
+    中性板块（35-65）：选动量最强的 3 只（动量领涨）
+      → 按 ret_20d 降序
+    """
+    stocks = []
+    for t in key_stocks:
+        info = score_single_stock(t, price_data)
+        if info:
+            stocks.append(info)
+
+    if not stocks:
+        return []
+
+    if sector_score >= 65:
+        # 超买 → 减仓候选 → score 最高排前
+        sorted_stocks = sorted(stocks, key=lambda x: x["score_raw"], reverse=True)
+        action_label = "减仓候选"
+        action_emoji = "🔴"
+    elif sector_score <= 35:
+        # 超卖 → 买入候选 → score 最低排前
+        sorted_stocks = sorted(stocks, key=lambda x: x["score_raw"])
+        action_label = "买入候选"
+        action_emoji = "🟢"
+    else:
+        # 中性 → 动量领涨 → ret_20d 最高排前
+        sorted_stocks = sorted(stocks, key=lambda x: (x["ret_20d"] or -999), reverse=True)
+        action_label = "动量领涨"
+        action_emoji = "⚪"
+
+    top3 = sorted_stocks[:3]
+    result = []
+    for s in top3:
+        result.append({
+            "ticker": s["ticker"],
+            "rsi14": s["rsi14"],
+            "ma200_dist_pct": s["ma200_dist_pct"],
+            "ret_20d": s["ret_20d"],
+            "score_raw": s["score_raw"],
+            "action_label": action_label,
+            "action_emoji": action_emoji,
+        })
+    return result
+
+
 def score_sector(metrics: Dict) -> Dict:
     """对单板块算评分"""
     if "error" in metrics:
@@ -166,22 +287,29 @@ def score_sector(metrics: Dict) -> Dict:
     }
 
 
-def score_all_sectors(sectors_data: Dict) -> Dict:
-    """对所有板块评分并排序"""
+def score_all_sectors(sectors_data: Dict, price_data=None) -> Dict:
+    """对所有板块评分并排序，附加每板块 top3 操作候选"""
     sectors = sectors_data.get("sectors", {})
     scored = []
+
+    # 建立 sector_key → key_stocks 映射
+    key_stocks_map = {s["key"]: s.get("key_stocks", []) for s in SECTORS}
 
     for key, metrics in sectors.items():
         result = score_sector(metrics)
         if "error" not in result:
+            # 计算 top3 操作候选
+            if price_data is not None:
+                ks = key_stocks_map.get(key, [])
+                top3 = get_top3_picks(key, result["composite"], ks, price_data)
+            else:
+                top3 = []
+            result["top3_picks"] = top3
             scored.append(result)
 
-    # 按分数降序（高的在前 = 最超买在前）
     scored_sorted = sorted(scored, key=lambda x: x["composite"], reverse=True)
-
-    # Top 5 / Bottom 5 提取（飞书卡片用）
     top5_overbought = scored_sorted[:5]
-    top5_oversold = sorted(scored_sorted[-5:], key=lambda x: x["composite"])  # 最低分在前
+    top5_oversold = sorted(scored_sorted[-5:], key=lambda x: x["composite"])
 
     return {
         "as_of_date": sectors_data.get("as_of_date"),
