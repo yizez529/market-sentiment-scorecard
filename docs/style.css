@@ -410,6 +410,27 @@ footer a:hover { text-decoration: underline; }
   border-top: 0.5px solid rgba(0,0,0,0.1);
 }
 
+/* 基本面温度 */
+.sector-temperature {
+  font-size: 11px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+.temp-accelerating { background: #FAEEDA; color: #993C1D; border-left: 3px solid #993C1D; }
+.temp-fair { background: #E6F1FB; color: #185FA5; border-left: 3px solid #185FA5; }
+.temp-warning { background: #FAC775; color: #854F0B; border-left: 3px solid #854F0B; }
+.temp-danger { background: #F7C1C1; color: #791F1F; border-left: 3px solid #791F1F; }
+.temp-no_data { background: #f1efe8; color: #888780; border-left: 3px solid #ccc; }
+.temp-details {
+  font-size: 10px;
+  font-family: monospace;
+  font-weight: 400;
+  margin-top: 2px;
+  opacity: 0.85;
+}
+
 /* Sectors guide table */
 .sectors-guide-table {
   width: 100%;
