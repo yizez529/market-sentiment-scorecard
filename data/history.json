@@ -278,5 +278,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-05-12",
+    "timestamp_utc": "2026-05-12T05:35:59.837041Z",
+    "composite_score": 85.0,
+    "status_label": "极度超买 / 顶部",
+    "status_zone": "extreme_overbought",
+    "dimension_scores": {
+      "volatility": 84.7,
+      "sentiment": 66.9,
+      "spx_breadth": 88.9,
+      "credit": 93.8,
+      "ndx": 80.2,
+      "cta": 100.0,
+      "momentum": 80.7
+    },
+    "headline": "综合 85.0 极度超买第四日，顶部结构未破但分化加剧",
+    "verdict": "85.0 第四日横盘，内部已分化外部仍贪婪——对冲不嫌早，减仓不嫌多，等 VIX 22 就晚了",
+    "key_indicators_snapshot": {
+      "VIX": 18.38,
+      "VXN": 24.74,
+      "SPX": 7412.84,
+      "NDX": 29320.66,
+      "HY_OAS": 281.0,
+      "fear_greed": 66.9,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
