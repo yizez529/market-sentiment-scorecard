@@ -334,5 +334,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-05-14",
+    "timestamp_utc": "2026-05-14T05:44:29.781255Z",
+    "composite_score": 85.0,
+    "status_label": "极度超买 / 顶部",
+    "status_zone": "extreme_overbought",
+    "dimension_scores": {
+      "volatility": 85.6,
+      "sentiment": 65.8,
+      "spx_breadth": 89.8,
+      "credit": 94.4,
+      "ndx": 80.7,
+      "cta": 100.0,
+      "momentum": 79.3
+    },
+    "headline": "综合 85.0 极度超买，触顶部阈值信用零警报",
+    "verdict": "85.0 正式触顶部阈值，信用还在贪婪故只减仓不清仓——降至 50%、买保护、AI 链停止一切加仓",
+    "key_indicators_snapshot": {
+      "VIX": 17.87,
+      "VXN": 24.59,
+      "SPX": 7444.25,
+      "NDX": 29366.94,
+      "HY_OAS": 282.0,
+      "fear_greed": 65.8,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
