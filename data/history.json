@@ -390,5 +390,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-05-16",
+    "timestamp_utc": "2026-05-16T05:24:01.602134Z",
+    "composite_score": 81.6,
+    "status_label": "严重超买",
+    "status_zone": "severe_overbought",
+    "dimension_scores": {
+      "volatility": 82.6,
+      "sentiment": 62.9,
+      "spx_breadth": 86.4,
+      "credit": 95.3,
+      "ndx": 72.7,
+      "cta": 100.0,
+      "momentum": 71.8
+    },
+    "headline": "综合 81.6 严重超买，CTA+信用双满分但广度回落",
+    "verdict": "顶部巩固转入技术性降温，信用未裂保持 50% 多头，等 NVDA 财报或 HY OAS 走阔再行动",
+    "key_indicators_snapshot": {
+      "VIX": 18.43,
+      "VXN": 25.33,
+      "SPX": 7408.5,
+      "NDX": 29125.2,
+      "HY_OAS": 276.0,
+      "fear_greed": 62.9,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
