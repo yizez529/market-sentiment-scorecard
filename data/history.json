@@ -418,5 +418,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-05-19",
+    "timestamp_utc": "2026-05-19T06:04:16.292782Z",
+    "composite_score": 81.7,
+    "status_label": "严重超买",
+    "status_zone": "severe_overbought",
+    "dimension_scores": {
+      "volatility": 83.1,
+      "sentiment": 62.7,
+      "spx_breadth": 85.4,
+      "credit": 95.2,
+      "ndx": 72.8,
+      "cta": 100.0,
+      "momentum": 72.6
+    },
+    "headline": "综合 81.7 严重超买，CTA+信用双满分广度温和回升",
+    "verdict": "81.7 顶部横盘第 N 天，CTA+信用未裂保持 50%，超买估值贵的板块该减，对冲该买",
+    "key_indicators_snapshot": {
+      "VIX": 17.82,
+      "VXN": 24.21,
+      "SPX": 7403.05,
+      "NDX": 28994.37,
+      "HY_OAS": 280.0,
+      "fear_greed": 62.7,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
