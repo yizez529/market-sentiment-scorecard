@@ -502,5 +502,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-05-22",
+    "timestamp_utc": "2026-05-22T06:02:50.250221Z",
+    "composite_score": 82.6,
+    "status_label": "严重超买",
+    "status_zone": "severe_overbought",
+    "dimension_scores": {
+      "volatility": 86.8,
+      "sentiment": 58.2,
+      "spx_breadth": 86.4,
+      "credit": 95.2,
+      "ndx": 76.0,
+      "cta": 100.0,
+      "momentum": 74.9
+    },
+    "headline": "综合 82.6 严重超买，CTA+信用满分顶部第 N+3 天",
+    "verdict": "82.6 顶部第 N+3 天，CTA+信用钉死满分=子弹打光，估值 stretched 篮子优先减 20-25%，留弹药等 OAS 扩张",
+    "key_indicators_snapshot": {
+      "VIX": 16.76,
+      "VXN": 22.74,
+      "SPX": 7445.72,
+      "NDX": 29357.27,
+      "HY_OAS": 280.0,
+      "fear_greed": 58.2,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
