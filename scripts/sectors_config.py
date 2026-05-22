@@ -1,6 +1,6 @@
 """
 sectors_config.py
-26 个板块的清单。每个板块定义：
+31 个板块的清单。每个板块定义：
 - key: 内部 id
 - name_zh: 中文名（飞书+dashboard 显示）
 - root: theme-sector-radar 的根编号（用于 dashboard 分组）
@@ -48,18 +48,25 @@ SECTORS = [
         "key_stocks": ["CRWV", "NBIS", "IREN", "APLD", "CIFR"],
     },
     {
-        "key": "power_grid", "name_zh": "电力/数据中心电气", "root": "AI数据中心",
-        "type": "basket", "tickers": ["GEV", "ETN", "PWR", "HUBB"],
+        "key": "dc_self_power", "name_zh": "数据中心自部署电力", "root": "AI数据中心",
+        "type": "basket", "tickers": ["FLNC", "FCEL", "BE", "GEV"],
         "benchmark": "SPY",
-        "components": "GEV ETN PWR HUBB",
-        "key_stocks": ["GEV", "ETN", "PWR", "HUBB"],
+        "components": "FLNC FCEL BE GEV",
+        "key_stocks": ["FLNC", "FCEL", "BE", "GEV"],
     },
     {
-        "key": "datacenter_reit", "name_zh": "数据中心 REIT/冷却", "root": "AI数据中心",
-        "type": "basket", "tickers": ["VRT", "MOD", "DLR", "EQIX"],
+        "key": "ai_power_equip", "name_zh": "AI 电力设备", "root": "AI数据中心",
+        "type": "basket", "tickers": ["ETN", "PWR", "VICOR", "AEIS"],
         "benchmark": "SPY",
-        "components": "VRT MOD DLR EQIX",
-        "key_stocks": ["VRT", "MOD", "DLR", "EQIX"],
+        "components": "ETN PWR VICOR AEIS",
+        "key_stocks": ["ETN", "PWR", "VICOR", "AEIS"],
+    },
+    {
+        "key": "dc_cooling", "name_zh": "数据中心冷却", "root": "AI数据中心",
+        "type": "basket", "tickers": ["VRT", "MOD"],
+        "benchmark": "SPY",
+        "components": "VRT MOD",
+        "key_stocks": ["VRT", "MOD"],
     },
 
     # ===== 根 3: 软件 / AI 应用层 =====
@@ -91,16 +98,43 @@ SECTORS = [
         "key_stocks": ["TSLA", "UBER", "MBLY", "AMBA", "SYM"],
     },
 
-    # ===== 根 5: 国防与航天 =====
+    # ===== 根 5: 国防 =====
     {
-        "key": "defense_space", "name_zh": "国防/航天", "root": "国防航天",
-        "type": "basket", "tickers": ["LMT", "RTX", "GD", "NOC", "PLTR", "RKLB", "ASTS"],
+        "key": "defense", "name_zh": "国防", "root": "国防",
+        "type": "basket", "tickers": ["LMT", "RTX", "GD", "NOC", "PLTR"],
         "benchmark": "SPY",
-        "components": "ITA + PLTR RKLB ASTS",
-        "key_stocks": ["LMT", "RTX", "PLTR", "RKLB", "ASTS"],
+        "components": "LMT RTX GD NOC PLTR",
+        "key_stocks": ["LMT", "RTX", "GD", "NOC", "PLTR"],
     },
 
-    # ===== 根 6: 能源转型 / 公用事业 =====
+    # ===== 根 6: 商业航天 =====
+    {
+        "key": "commercial_space", "name_zh": "商业航天", "root": "商业航天",
+        "type": "basket", "tickers": ["RKLB", "ASTS", "RDW"],
+        "benchmark": "SPY",
+        "components": "RKLB ASTS RDW",
+        "key_stocks": ["RKLB", "ASTS", "RDW"],
+    },
+
+    # ===== 根 7: 无人机 =====
+    {
+        "key": "drones", "name_zh": "无人机", "root": "无人机",
+        "type": "basket", "tickers": ["AVAV", "KTOS"],
+        "benchmark": "SPY",
+        "components": "AVAV KTOS",
+        "key_stocks": ["AVAV", "KTOS"],
+    },
+
+    # ===== 根 8: AI 电力 =====
+    {
+        "key": "ai_power", "name_zh": "AI 电力", "root": "AI电力",
+        "type": "basket", "tickers": ["CEG", "TLN", "VST"],
+        "benchmark": "SPY",
+        "components": "CEG TLN VST",
+        "key_stocks": ["CEG", "TLN", "VST"],
+    },
+
+    # ===== 根 9: 能源转型 / 公用事业 =====
     {
         "key": "energy", "name_zh": "传统能源", "root": "能源公用",
         "type": "etf", "ticker": "XLE", "benchmark": "SPY",
@@ -117,11 +151,20 @@ SECTORS = [
     {
         "key": "utilities", "name_zh": "公用事业", "root": "能源公用",
         "type": "etf", "ticker": "XLU", "benchmark": "SPY",
-        "components": "NEE SO DUK",
-        "key_stocks": ["NEE", "SO", "DUK", "AEP", "CEG"],
+        "components": "NEE SO DUK AEP",
+        "key_stocks": ["NEE", "SO", "DUK", "AEP"],
     },
 
-    # ===== 根 7: 医疗 =====
+    # ===== 根 10: 存储 =====
+    {
+        "key": "storage", "name_zh": "存储", "root": "存储",
+        "type": "basket", "tickers": ["MU", "SNDK", "WDC", "STX"],
+        "benchmark": "SPY",
+        "components": "MU SNDK WDC STX",
+        "key_stocks": ["MU", "SNDK", "WDC", "STX"],
+    },
+
+    # ===== 根 11: 医疗 =====
     {
         "key": "healthcare", "name_zh": "医疗保健", "root": "医疗",
         "type": "etf", "ticker": "XLV", "benchmark": "SPY",
@@ -143,7 +186,7 @@ SECTORS = [
         "key_stocks": ["HUM", "UNH", "CVS", "CI", "ELV"],
     },
 
-    # ===== 根 8: 金融 =====
+    # ===== 根 12: 金融 =====
     {
         "key": "financials", "name_zh": "金融", "root": "金融",
         "type": "etf", "ticker": "XLF", "benchmark": "SPY",
@@ -151,7 +194,7 @@ SECTORS = [
         "key_stocks": ["JPM", "BAC", "GS", "MS", "WFC"],
     },
 
-    # ===== 根 9: 中国 / 新兴市场 =====
+    # ===== 根 13: 中国 / 新兴市场 =====
     {
         "key": "china_tech", "name_zh": "中概互联", "root": "中国新兴市场",
         "type": "etf", "ticker": "KWEB", "benchmark": "SPY",
@@ -159,7 +202,7 @@ SECTORS = [
         "key_stocks": ["BABA", "PDD", "JD", "BIDU", "NTES"],
     },
 
-    # ===== 根 10: 加密 / BTC 生态 =====
+    # ===== 根 14: 加密 / BTC 生态 =====
     {
         "key": "btc_spot", "name_zh": "BTC 现货", "root": "加密BTC",
         "type": "etf", "ticker": "IBIT", "benchmark": "SPY",
@@ -180,7 +223,7 @@ SECTORS = [
         "key_stocks": ["COIN", "HOOD", "MSTR"],
     },
 
-    # ===== 根 12: 消费 / 工业 =====
+    # ===== 根 15: 消费 / 工业 =====
     {
         "key": "industrials", "name_zh": "工业", "root": "消费工业",
         "type": "etf", "ticker": "XLI", "benchmark": "SPY",

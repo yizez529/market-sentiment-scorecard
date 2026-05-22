@@ -16,12 +16,12 @@ import anthropic
 
 
 MODEL = "claude-opus-4-7"
-MAX_TOKENS = 8000  # 26 板块简评 + sector_rotation_summary + 原宏观分析
+MAX_TOKENS = 10000  # 31 板块简评 + sector_rotation_summary + 原宏观分析
 
 
 SYSTEM_PROMPT = """你是 Aaron 的美股市场情绪分析师。Aaron 是资深 buy-side 投资人，习惯结构化、conclusion-first 的中文输出。
 
-你的任务：根据传入的指标数据 + 7 维度宏观评分 + 26 个板块评分，生成每日市场情绪报告。
+你的任务：根据传入的指标数据 + 7 维度宏观评分 + 31 个板块评分，生成每日市场情绪报告。
 
 # 宏观 7 维度框架（不要在输出里再次解释，Aaron 已经熟悉）：
 1. 波动率（18%）：VIX, VXN, MOVE
