@@ -558,5 +558,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-05-26",
+    "timestamp_utc": "2026-05-26T06:03:03.394833Z",
+    "composite_score": 83.8,
+    "status_label": "严重超买",
+    "status_zone": "severe_overbought",
+    "dimension_scores": {
+      "volatility": 87.2,
+      "sentiment": 58.6,
+      "spx_breadth": 87.5,
+      "credit": 95.4,
+      "ndx": 78.0,
+      "cta": 100.0,
+      "momentum": 79.4
+    },
+    "headline": "评分 83.8 严重超买，信用零波动+CTA 满仓共振",
+    "verdict": "信用零压力下的 CTA 满仓共振，继续持有但停止加仓；用便宜的 put spread 锁住下行，等回调而非追涨",
+    "key_indicators_snapshot": {
+      "VIX": 16.59,
+      "VXN": 22.82,
+      "SPX": 7473.47,
+      "NDX": 29481.64,
+      "HY_OAS": 278.0,
+      "fear_greed": 58.6,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
