@@ -614,5 +614,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-05-28",
+    "timestamp_utc": "2026-05-28T06:07:43.365740Z",
+    "composite_score": 83.6,
+    "status_label": "严重超买",
+    "status_zone": "severe_overbought",
+    "dimension_scores": {
+      "volatility": 88.5,
+      "sentiment": 60.7,
+      "spx_breadth": 88.3,
+      "credit": 96.4,
+      "ndx": 71.9,
+      "cta": 100.0,
+      "momentum": 77.9
+    },
+    "headline": "评分 83.6 仍处严重超买，顶部张力小幅缓和但未解除",
+    "verdict": "顶部信号未解除但出现首道裂缝（NDX）——保持 60-65% 仓位 + 便宜 put spread，等 HY 走阔确认转折，不抢反弹",
+    "key_indicators_snapshot": {
+      "VIX": 16.29,
+      "VXN": 23.39,
+      "SPX": 7520.36,
+      "NDX": 29973.57,
+      "HY_OAS": 272.0,
+      "fear_greed": 60.7,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
