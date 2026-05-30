@@ -670,5 +670,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-05-30",
+    "timestamp_utc": "2026-05-30T05:44:49.915745Z",
+    "composite_score": 85.2,
+    "status_label": "极度超买 / 顶部",
+    "status_zone": "extreme_overbought",
+    "dimension_scores": {
+      "volatility": 90.5,
+      "sentiment": 60.2,
+      "spx_breadth": 88.9,
+      "credit": 96.7,
+      "ndx": 74.6,
+      "cta": 100.0,
+      "momentum": 83.3
+    },
+    "headline": "评分 85.2 维持极度超买，顶部张力第二日紧绷",
+    "verdict": "85 分顶部静默期——不再加仓不再追减，用极便宜 put 锁尾部，等信用或 VIX 给信号再动手",
+    "key_indicators_snapshot": {
+      "VIX": 15.32,
+      "VXN": 22.58,
+      "SPX": 7580.06,
+      "NDX": 30333.18,
+      "HY_OAS": 272.0,
+      "fear_greed": 60.2,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
