@@ -726,5 +726,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-06-03",
+    "timestamp_utc": "2026-06-03T06:48:37.863421Z",
+    "composite_score": 85.9,
+    "status_label": "极度超买 / 顶部",
+    "status_zone": "extreme_overbought",
+    "dimension_scores": {
+      "volatility": 88.8,
+      "sentiment": 57.1,
+      "spx_breadth": 88.5,
+      "credit": 96.7,
+      "ndx": 80.9,
+      "cta": 100.0,
+      "momentum": 88.0
+    },
+    "headline": "评分 85.9 极度超买第 4 日，BTC 现货 3 分异象",
+    "verdict": "85.9 顶部第 4 日——继续只做减法，把 ⚠️ AI/半导体利润落袋 15-20%，用 15 VIX 的便宜 put 静等信用或波动率给信号",
+    "key_indicators_snapshot": {
+      "VIX": 15.77,
+      "VXN": 23.27,
+      "SPX": 7609.78,
+      "NDX": 30660.6,
+      "HY_OAS": 272.0,
+      "fear_greed": 57.1,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
