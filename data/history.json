@@ -754,5 +754,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-06-04",
+    "timestamp_utc": "2026-06-04T06:39:35.486762Z",
+    "composite_score": 80.8,
+    "status_label": "严重超买",
+    "status_zone": "severe_overbought",
+    "dimension_scores": {
+      "volatility": 88.0,
+      "sentiment": 54.0,
+      "spx_breadth": 86.4,
+      "credit": 96.5,
+      "ndx": 74.1,
+      "cta": 100.0,
+      "momentum": 66.2
+    },
+    "headline": "评分 80.8 严重超买回落，BTC 现货 0 分异象延续",
+    "verdict": "80.8 顶部第 5 日动量首松——继续只做减法，⚠️ 板块利润再落袋 5-10%，便宜 put 不要拆，等 CTA 100 第一次破位",
+    "key_indicators_snapshot": {
+      "VIX": 16.06,
+      "VXN": 23.84,
+      "SPX": 7553.68,
+      "NDX": 30571.24,
+      "HY_OAS": 271.0,
+      "fear_greed": 54.0,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
