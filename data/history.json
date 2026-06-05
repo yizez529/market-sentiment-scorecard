@@ -782,5 +782,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-06-05",
+    "timestamp_utc": "2026-06-05T06:18:34.446472Z",
+    "composite_score": 80.8,
+    "status_label": "严重超买",
+    "status_zone": "severe_overbought",
+    "dimension_scores": {
+      "volatility": 88.0,
+      "sentiment": 54.7,
+      "spx_breadth": 86.4,
+      "credit": 96.0,
+      "ndx": 74.1,
+      "cta": 100.0,
+      "momentum": 66.2
+    },
+    "headline": "评分 80.8 顶部第 6 日横盘，CTA 100 极值未破",
+    "verdict": "80.8 顶部横盘第 6 日，CTA 100 + 信用 96 双高位紧绷未断，继续只做减法，等弦先响",
+    "key_indicators_snapshot": {
+      "VIX": 16.06,
+      "VXN": 23.84,
+      "SPX": 7553.68,
+      "NDX": 30571.24,
+      "HY_OAS": 275.0,
+      "fear_greed": 54.7,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
