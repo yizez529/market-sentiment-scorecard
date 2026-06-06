@@ -810,5 +810,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-06-06",
+    "timestamp_utc": "2026-06-06T05:51:17.462891Z",
+    "composite_score": 71.4,
+    "status_label": "严重超买",
+    "status_zone": "severe_overbought",
+    "dimension_scores": {
+      "volatility": 75.4,
+      "sentiment": 42.1,
+      "spx_breadth": 75.1,
+      "credit": 96.2,
+      "ndx": 53.0,
+      "cta": 100.0,
+      "momentum": 56.8
+    },
+    "headline": "评分 71.4 回落至严重超买下沿，VIX 跳 21.5 内部分化加剧",
+    "verdict": "顶部第 7 日终于松动 9 pt，散户先恐慌但 CTA + 信用未动，弦响未断，继续只做减法不抄底",
+    "key_indicators_snapshot": {
+      "VIX": 21.51,
+      "VXN": 30.47,
+      "SPX": 7383.74,
+      "NDX": 28957.6,
+      "HY_OAS": 274.0,
+      "fear_greed": 42.1,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
