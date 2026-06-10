@@ -866,5 +866,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-06-10",
+    "timestamp_utc": "2026-06-10T06:20:06.472588Z",
+    "composite_score": 74.3,
+    "status_label": "严重超买",
+    "status_zone": "severe_overbought",
+    "dimension_scores": {
+      "volatility": 81.1,
+      "sentiment": 33.5,
+      "spx_breadth": 75.8,
+      "credit": 95.7,
+      "ndx": 72.1,
+      "cta": 100.0,
+      "momentum": 61.8
+    },
+    "headline": "评分 74.3 仍处严重超买，内部分化加剧 BTC 现货击穿底部",
+    "verdict": "顶部第 9 日，指数横盘板块大轮动；不减总仓位，只做 stretched→oversold + 基本面健康的换仓",
+    "key_indicators_snapshot": {
+      "VIX": 18.92,
+      "VXN": 27.12,
+      "SPX": 7405.73,
+      "NDX": 29414.26,
+      "HY_OAS": 275.0,
+      "fear_greed": 33.5,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
