@@ -894,5 +894,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-06-11",
+    "timestamp_utc": "2026-06-11T06:45:14.213654Z",
+    "composite_score": 71.1,
+    "status_label": "严重超买",
+    "status_zone": "severe_overbought",
+    "dimension_scores": {
+      "volatility": 77.8,
+      "sentiment": 27.6,
+      "spx_breadth": 73.9,
+      "credit": 95.4,
+      "ndx": 61.9,
+      "cta": 100.0,
+      "momentum": 60.1
+    },
+    "headline": "评分 71.1 仍严重超买，内部裂口扩大 BTC 现货归零",
+    "verdict": "顶部第 10 日，指数尚稳但 NDX 已松动；不减总仓只换仓，stretched 名单减、oversold + 基本面健康的加",
+    "key_indicators_snapshot": {
+      "VIX": 19.87,
+      "VXN": 29.78,
+      "SPX": 7386.65,
+      "NDX": 29084.5,
+      "HY_OAS": 278.0,
+      "fear_greed": 27.6,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
