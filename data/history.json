@@ -922,5 +922,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-06-12",
+    "timestamp_utc": "2026-06-12T06:37:32.638994Z",
+    "composite_score": 72.4,
+    "status_label": "严重超买",
+    "status_zone": "severe_overbought",
+    "dimension_scores": {
+      "volatility": 79.1,
+      "sentiment": 29.7,
+      "spx_breadth": 73.0,
+      "credit": 95.2,
+      "ndx": 71.3,
+      "cta": 100.0,
+      "momentum": 58.6
+    },
+    "headline": "评分 72.4 严重超买，CTA 100% 满仓 + 信用 95 极致，但 BTC/自动驾驶/核能崩塌",
+    "verdict": "顶部第 11 日，不全面减但必须换仓：砍 stretched 名单 10pp，留 🔥/📈 健康板块，QQQ put 必上",
+    "key_indicators_snapshot": {
+      "VIX": 19.44,
+      "VXN": 30.44,
+      "SPX": 7394.3,
+      "NDX": 29446.18,
+      "HY_OAS": 280.0,
+      "fear_greed": 29.7,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
