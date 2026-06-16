@@ -978,5 +978,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-06-16",
+    "timestamp_utc": "2026-06-16T07:22:30.540014Z",
+    "composite_score": 76.2,
+    "status_label": "严重超买",
+    "status_zone": "severe_overbought",
+    "dimension_scores": {
+      "volatility": 83.9,
+      "sentiment": 41.3,
+      "spx_breadth": 74.7,
+      "credit": 96.5,
+      "ndx": 75.7,
+      "cta": 100.0,
+      "momentum": 61.2
+    },
+    "headline": "评分 76.2 严重超买顶部第13日，K型分化达极致",
+    "verdict": "顶部第 13 日 + CTA 满档 + 信用零裂痕 = 继续换仓不全面减；砍 ⚠️ stretched 板块 10pp，加 QQQ put，等 OPEX 后看牌",
+    "key_indicators_snapshot": {
+      "VIX": 17.68,
+      "VXN": 27.27,
+      "SPX": 7431.46,
+      "NDX": 29635.95,
+      "HY_OAS": 271.0,
+      "fear_greed": 41.3,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
