@@ -1006,5 +1006,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-06-17",
+    "timestamp_utc": "2026-06-17T07:04:57.318088Z",
+    "composite_score": 74.4,
+    "status_label": "严重超买",
+    "status_zone": "severe_overbought",
+    "dimension_scores": {
+      "volatility": 85.8,
+      "sentiment": 39.5,
+      "spx_breadth": 78.3,
+      "credit": 97.3,
+      "ndx": 59.0,
+      "cta": 100.0,
+      "momentum": 58.5
+    },
+    "headline": "评分 74.4 严重超买，K 型加剧 BTC/自动驾驶崩塌",
+    "verdict": "顶部第 14 日 NDX 率先松动，宏观仍硬不全面减；继续换仓 K 型负端→中性偏强板块，OPEX 后看牌",
+    "key_indicators_snapshot": {
+      "VIX": 16.41,
+      "VXN": 26.95,
+      "SPX": 7511.35,
+      "NDX": 29968.13,
+      "HY_OAS": 266.0,
+      "fear_greed": 39.5,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
