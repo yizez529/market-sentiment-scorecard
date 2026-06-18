@@ -1034,5 +1034,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-06-18",
+    "timestamp_utc": "2026-06-18T06:48:32.409103Z",
+    "composite_score": 71.0,
+    "status_label": "严重超买",
+    "status_zone": "severe_overbought",
+    "dimension_scores": {
+      "volatility": 81.9,
+      "sentiment": 32.7,
+      "spx_breadth": 72.0,
+      "credit": 96.2,
+      "ndx": 61.2,
+      "cta": 100.0,
+      "momentum": 51.2
+    },
+    "headline": "评分 71.0 严重超买回落 3.4，K 型分化极致",
+    "verdict": "顶部第 15 日宏观仍硬不全面减；继续从⚠️ stretched 板块换仓到 saas/glp1 等估值合理区，OPEX 后看牌",
+    "key_indicators_snapshot": {
+      "VIX": 18.44,
+      "VXN": 28.56,
+      "SPX": 7420.1,
+      "NDX": 29670.95,
+      "HY_OAS": 271.0,
+      "fear_greed": 32.7,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
