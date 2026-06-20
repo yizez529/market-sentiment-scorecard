@@ -1090,5 +1090,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-06-20",
+    "timestamp_utc": "2026-06-20T06:17:01.016962Z",
+    "composite_score": 75.5,
+    "status_label": "严重超买",
+    "status_zone": "severe_overbought",
+    "dimension_scores": {
+      "volatility": 86.3,
+      "sentiment": 37.3,
+      "spx_breadth": 76.4,
+      "credit": 97.4,
+      "ndx": 71.4,
+      "cta": 100.0,
+      "momentum": 58.9
+    },
+    "headline": "评分 75.5 严重超买 D17，K 型极化加剧",
+    "verdict": "顶部第 17 日，宏观仍硬不全面减；本周 OPEX 内继续做 stretched→fair 的换仓，hedge 加好，等 credit 给信号",
+    "key_indicators_snapshot": {
+      "VIX": 16.4,
+      "VXN": 26.31,
+      "SPX": 7500.58,
+      "NDX": 30406.19,
+      "HY_OAS": 263.0,
+      "fear_greed": 37.3,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
