@@ -1118,5 +1118,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-06-23",
+    "timestamp_utc": "2026-06-23T06:03:29.396596Z",
+    "composite_score": 72.7,
+    "status_label": "严重超买",
+    "status_zone": "severe_overbought",
+    "dimension_scores": {
+      "volatility": 84.1,
+      "sentiment": 34.7,
+      "spx_breadth": 74.1,
+      "credit": 97.0,
+      "ndx": 62.6,
+      "cta": 100.0,
+      "momentum": 54.3
+    },
+    "headline": "评分 72.7 (严重超买) — Claude 分析失败",
+    "verdict": "Claude 分析失败请检查 GitHub Actions 日志",
+    "key_indicators_snapshot": {
+      "VIX": 17.28,
+      "VXN": 27.67,
+      "SPX": 7472.79,
+      "NDX": 30347.08,
+      "HY_OAS": 266.0,
+      "fear_greed": 34.7,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
