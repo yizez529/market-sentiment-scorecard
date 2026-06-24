@@ -1146,5 +1146,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-06-24",
+    "timestamp_utc": "2026-06-24T06:03:14.624804Z",
+    "composite_score": 67.3,
+    "status_label": "偏超买",
+    "status_zone": "moderate_overbought",
+    "dimension_scores": {
+      "volatility": 77.6,
+      "sentiment": 27.7,
+      "spx_breadth": 67.1,
+      "credit": 97.1,
+      "ndx": 52.4,
+      "cta": 100.0,
+      "momentum": 47.2
+    },
+    "headline": "评分 67.3 偏超买，市场内部分化加剧",
+    "verdict": "67.3 是策略转折区——CTA 满仓 + 信用极宽 vs 广度极窄 + 情绪转 fear，对冲科技端最性价比",
+    "key_indicators_snapshot": {
+      "VIX": 19.49,
+      "VXN": 32.37,
+      "SPX": 7365.46,
+      "NDX": 29347.27,
+      "HY_OAS": 265.0,
+      "fear_greed": 27.7,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
