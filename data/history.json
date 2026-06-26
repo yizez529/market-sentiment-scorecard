@@ -1202,5 +1202,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-06-26",
+    "timestamp_utc": "2026-06-26T06:06:22.097937Z",
+    "composite_score": 68.0,
+    "status_label": "偏超买",
+    "status_zone": "moderate_overbought",
+    "dimension_scores": {
+      "volatility": 79.5,
+      "sentiment": 25.5,
+      "spx_breadth": 65.8,
+      "credit": 95.6,
+      "ndx": 64.8,
+      "cta": 100.0,
+      "momentum": 43.9
+    },
+    "headline": "评分 68.0 偏超买，市场极度分化加剧",
+    "verdict": "宏观偏超买但内部已是双速市场，减贵买便宜的轮动比 directional bet 更安全",
+    "key_indicators_snapshot": {
+      "VIX": 18.89,
+      "VXN": 30.91,
+      "SPX": 7357.49,
+      "NDX": 29440.32,
+      "HY_OAS": 276.0,
+      "fear_greed": 25.5,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
