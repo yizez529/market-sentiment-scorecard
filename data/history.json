@@ -1230,5 +1230,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-06-27",
+    "timestamp_utc": "2026-06-27T05:50:29.240164Z",
+    "composite_score": 65.9,
+    "status_label": "偏超买",
+    "status_zone": "moderate_overbought",
+    "dimension_scores": {
+      "volatility": 80.2,
+      "sentiment": 24.8,
+      "spx_breadth": 65.3,
+      "credit": 95.1,
+      "ndx": 61.7,
+      "cta": 83.3,
+      "momentum": 48.8
+    },
+    "headline": "评分 65.9 偏超买，宏观降温但分化加剧",
+    "verdict": "宏观 65.9 不算贵但内部已分裂，减贵 ⚠️ 加超卖 🔥/合理板块，对冲必备，不抢反弹。",
+    "key_indicators_snapshot": {
+      "VIX": 18.41,
+      "VXN": 30.82,
+      "SPX": 7354.02,
+      "NDX": 29118.24,
+      "HY_OAS": 278.0,
+      "fear_greed": 24.8,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 83.3
+    }
   }
 ]
