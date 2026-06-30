@@ -1258,5 +1258,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 83.3
     }
+  },
+  {
+    "as_of": "2026-06-30",
+    "timestamp_utc": "2026-06-30T06:06:57.243468Z",
+    "composite_score": 72.5,
+    "status_label": "严重超买",
+    "status_zone": "severe_overbought",
+    "dimension_scores": {
+      "volatility": 82.3,
+      "sentiment": 27.2,
+      "spx_breadth": 70.2,
+      "credit": 94.2,
+      "ndx": 69.3,
+      "cta": 100.0,
+      "momentum": 62.2
+    },
+    "headline": "宏观 72.5 严重超买，CTA 满仓 + 信用极紧，内部极端分化",
+    "verdict": "72.5 + CTA 100 + 信用 94 = reward/risk 极差。减贵留超卖 🔥/合理，对冲必上，绝不追涨。",
+    "key_indicators_snapshot": {
+      "VIX": 17.65,
+      "VXN": 29.37,
+      "SPX": 7440.43,
+      "NDX": 29774.75,
+      "HY_OAS": 283.0,
+      "fear_greed": 27.2,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
