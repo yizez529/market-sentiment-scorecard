@@ -1314,5 +1314,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-07-02",
+    "timestamp_utc": "2026-07-02T05:55:05.454270Z",
+    "composite_score": 74.2,
+    "status_label": "严重超买",
+    "status_zone": "severe_overbought",
+    "dimension_scores": {
+      "volatility": 85.0,
+      "sentiment": 32.1,
+      "spx_breadth": 72.1,
+      "credit": 95.4,
+      "ndx": 63.0,
+      "cta": 100.0,
+      "momentum": 67.9
+    },
+    "headline": "评分 74.2 严重超买——信用/CTA 极端拉满，情绪已现裂缝",
+    "verdict": "评分 74 但内部结构已现裂缝——减估值 stretched 的赢家、保留 🔥/合理估值的持仓、买保护",
+    "key_indicators_snapshot": {
+      "VIX": 16.59,
+      "VXN": 27.69,
+      "SPX": 7483.23,
+      "NDX": 29809.13,
+      "HY_OAS": 275.0,
+      "fear_greed": 32.1,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
