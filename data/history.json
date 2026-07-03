@@ -1342,5 +1342,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-07-03",
+    "timestamp_utc": "2026-07-03T05:48:59.675866Z",
+    "composite_score": 73.2,
+    "status_label": "严重超买",
+    "status_zone": "severe_overbought",
+    "dimension_scores": {
+      "volatility": 85.3,
+      "sentiment": 31.9,
+      "spx_breadth": 71.7,
+      "credit": 95.5,
+      "ndx": 56.6,
+      "cta": 100.0,
+      "momentum": 66.0
+    },
+    "headline": "评分 73.2 严重超买——内部裂缝扩大，AI 硬件全线走弱",
+    "verdict": "73 分是假稳定——AI 主线已裂，情绪-估值-CTA 三角背离，减估值 stretched 赢家 + 加保护，等回撤而非追高",
+    "key_indicators_snapshot": {
+      "VIX": 16.15,
+      "VXN": 27.98,
+      "SPX": 7483.24,
+      "NDX": 29329.21,
+      "HY_OAS": 274.0,
+      "fear_greed": 31.9,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
