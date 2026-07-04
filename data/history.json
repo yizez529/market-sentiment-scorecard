@@ -1370,5 +1370,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-07-04",
+    "timestamp_utc": "2026-07-04T05:41:50.445832Z",
+    "composite_score": 73.2,
+    "status_label": "严重超买",
+    "status_zone": "severe_overbought",
+    "dimension_scores": {
+      "volatility": 85.3,
+      "sentiment": 31.9,
+      "spx_breadth": 71.7,
+      "credit": 95.7,
+      "ndx": 56.6,
+      "cta": 100.0,
+      "momentum": 66.0
+    },
+    "headline": "评分 73.2 严重超买——AI 主线熄火，防御-金融接棒",
+    "verdict": "73 分是延续昨日的'假稳定'——领涨换到防御+估值 stretched 板块是顶部前兆，减 stretched 赢家 + 加保护，别追新龙头",
+    "key_indicators_snapshot": {
+      "VIX": 16.15,
+      "VXN": 27.98,
+      "SPX": 7483.24,
+      "NDX": 29329.21,
+      "HY_OAS": 275.0,
+      "fear_greed": 31.9,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
