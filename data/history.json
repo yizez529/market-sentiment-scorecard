@@ -1398,5 +1398,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-07-07",
+    "timestamp_utc": "2026-07-07T06:03:45.776906Z",
+    "composite_score": 77.3,
+    "status_label": "严重超买",
+    "status_zone": "severe_overbought",
+    "dimension_scores": {
+      "volatility": 87.0,
+      "sentiment": 44.5,
+      "spx_breadth": 74.6,
+      "credit": 95.8,
+      "ndx": 67.4,
+      "cta": 100.0,
+      "momentum": 68.5
+    },
+    "headline": "评分 77.3 严重超买——CTA 顶格+信用极紧，风险堆积",
+    "verdict": "77 分是低波动裹挟下的高危区，CTA 顶格+F&G 背离+领涨切防御=典型顶部前配置，减 stretched 加保护，静候 HY 或 VIX 破位",
+    "key_indicators_snapshot": {
+      "VIX": 15.57,
+      "VXN": 26.81,
+      "SPX": 7537.43,
+      "NDX": 29697.87,
+      "HY_OAS": 274.0,
+      "fear_greed": 44.5,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
