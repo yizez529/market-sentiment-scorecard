@@ -1482,5 +1482,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-07-10",
+    "timestamp_utc": "2026-07-10T05:59:38.637527Z",
+    "composite_score": 77.9,
+    "status_label": "严重超买",
+    "status_zone": "severe_overbought",
+    "dimension_scores": {
+      "volatility": 86.6,
+      "sentiment": 47.3,
+      "spx_breadth": 73.9,
+      "credit": 96.0,
+      "ndx": 69.3,
+      "cta": 100.0,
+      "momentum": 69.5
+    },
+    "headline": "综合 77.9 严重超买，信用与 CTA 双满档、指数创新高",
+    "verdict": "贵、拥挤、CTA 满仓，减到 55% 净多，用便宜 VIX call spread 买保险，等分化收敛再回补",
+    "key_indicators_snapshot": {
+      "VIX": 15.84,
+      "VXN": 26.91,
+      "SPX": 7543.64,
+      "NDX": 29727.1,
+      "HY_OAS": 270.0,
+      "fear_greed": 47.3,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
