@@ -1510,5 +1510,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-07-11",
+    "timestamp_utc": "2026-07-11T05:09:53.039586Z",
+    "composite_score": 78.2,
+    "status_label": "严重超买",
+    "status_zone": "severe_overbought",
+    "dimension_scores": {
+      "volatility": 89.2,
+      "sentiment": 49.5,
+      "spx_breadth": 75.5,
+      "credit": 96.0,
+      "ndx": 64.5,
+      "cta": 100.0,
+      "momentum": 68.4
+    },
+    "headline": "综合 78.2 严重超买，信用与 CTA 满档、板块极度分化",
+    "verdict": "顶部钝化非崩盘，减到 50-55% 净多，卖估值 stretched 的贵科技，留基本面合理的+便宜 VIX call spread，等 HY OAS 或 VIX 破位再动手",
+    "key_indicators_snapshot": {
+      "VIX": 15.03,
+      "VXN": 24.89,
+      "SPX": 7575.39,
+      "NDX": 29825.11,
+      "HY_OAS": 270.0,
+      "fear_greed": 49.5,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
