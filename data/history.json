@@ -1538,5 +1538,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-07-14",
+    "timestamp_utc": "2026-07-14T04:47:53.908996Z",
+    "composite_score": 73.7,
+    "status_label": "严重超买",
+    "status_zone": "severe_overbought",
+    "dimension_scores": {
+      "volatility": 84.5,
+      "sentiment": 43.7,
+      "spx_breadth": 71.4,
+      "credit": 95.8,
+      "ndx": 54.7,
+      "cta": 100.0,
+      "momentum": 61.3
+    },
+    "headline": "综合 73.7 严重超买回落，指数钝化但内部剧烈分化",
+    "verdict": "顶部钝化进入第二阶段：价格先弱、信用/CTA 未松。维持 50-55% 净多，卖 stretched 减仓 Defense/Industrials/BA，留 VIX call spread 等信用破位",
+    "key_indicators_snapshot": {
+      "VIX": 17.16,
+      "VXN": 27.3,
+      "SPX": 7515.34,
+      "NDX": 29264.1,
+      "HY_OAS": 269.0,
+      "fear_greed": 43.7,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
