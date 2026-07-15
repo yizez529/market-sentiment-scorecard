@@ -1566,5 +1566,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-07-15",
+    "timestamp_utc": "2026-07-15T04:48:23.709261Z",
+    "composite_score": 73.7,
+    "status_label": "严重超买",
+    "status_zone": "severe_overbought",
+    "dimension_scores": {
+      "volatility": 85.4,
+      "sentiment": 43.3,
+      "spx_breadth": 71.4,
+      "credit": 95.5,
+      "ndx": 54.7,
+      "cta": 100.0,
+      "momentum": 61.3
+    },
+    "headline": "综合 73.7 严重超买持平，头部钝化叠加尾部主题崩塌",
+    "verdict": "顶部钝化第二阶段延续：价格弱、信用/CTA 未松。50-55% 净多 + VIX/HYG 双对冲，卖 stretched（BA/XLV/XLI/Defense）等信用破位。",
+    "key_indicators_snapshot": {
+      "VIX": 16.5,
+      "VXN": 27.3,
+      "SPX": 7515.34,
+      "NDX": 29264.1,
+      "HY_OAS": 269.0,
+      "fear_greed": 43.3,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
