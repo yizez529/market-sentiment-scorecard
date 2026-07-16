@@ -1594,5 +1594,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-07-16",
+    "timestamp_utc": "2026-07-16T04:56:56.670597Z",
+    "composite_score": 78.5,
+    "status_label": "严重超买",
+    "status_zone": "severe_overbought",
+    "dimension_scores": {
+      "volatility": 87.7,
+      "sentiment": 46.3,
+      "spx_breadth": 74.3,
+      "credit": 94.8,
+      "ndx": 62.4,
+      "cta": 100.0,
+      "momentum": 78.7
+    },
+    "headline": "综合 78.5 严重超买加剧，指数创新高但尾部塌方",
+    "verdict": "顶部钝化第三阶段：价格拉升 + 广度背离 + CTA 顶格。降至 45-50% 净多 + 加码 SPY/HYG put，等信用破位",
+    "key_indicators_snapshot": {
+      "VIX": 15.67,
+      "VXN": 25.65,
+      "SPX": 7572.4,
+      "NDX": 29502.6,
+      "HY_OAS": 272.0,
+      "fear_greed": 46.3,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
