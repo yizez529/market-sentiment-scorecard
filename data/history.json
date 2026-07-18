@@ -1650,5 +1650,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-07-18",
+    "timestamp_utc": "2026-07-18T04:45:15.461314Z",
+    "composite_score": 68.9,
+    "status_label": "偏超买",
+    "status_zone": "moderate_overbought",
+    "dimension_scores": {
+      "volatility": 81.1,
+      "sentiment": 37.1,
+      "spx_breadth": 66.6,
+      "credit": 95.2,
+      "ndx": 52.5,
+      "cta": 83.3,
+      "momentum": 61.5
+    },
+    "headline": "综合 68.9 偏超买回落，指数与投机端裂缝加深",
+    "verdict": "顶部钝化第五阶段：CTA 开始退出、NDX 先破、散户已恐慌。45% 净多 + put 保护，等信用破位或 VIX>22 再动手",
+    "key_indicators_snapshot": {
+      "VIX": 18.77,
+      "VXN": 29.03,
+      "SPX": 7457.69,
+      "NDX": 28592.66,
+      "HY_OAS": 271.0,
+      "fear_greed": 37.1,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 83.3
+    }
   }
 ]
