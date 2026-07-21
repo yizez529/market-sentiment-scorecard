@@ -1678,5 +1678,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 83.3
     }
+  },
+  {
+    "as_of": "2026-07-21",
+    "timestamp_utc": "2026-07-21T05:17:00.881509Z",
+    "composite_score": 68.0,
+    "status_label": "偏超买",
+    "status_zone": "moderate_overbought",
+    "dimension_scores": {
+      "volatility": 81.5,
+      "sentiment": 37.6,
+      "spx_breadth": 65.6,
+      "credit": 94.7,
+      "ndx": 55.7,
+      "cta": 83.3,
+      "momentum": 53.7
+    },
+    "headline": "综合 68.0 偏超买微降，指数钝化投机端出血加剧",
+    "verdict": "顶部钝化持续，投机端已死、指数将破未破。45% 净多 + put 保护，等 HY OAS 破 300 或 VIX 破 22 再动手。",
+    "key_indicators_snapshot": {
+      "VIX": 18.65,
+      "VXN": 28.53,
+      "SPX": 7443.28,
+      "NDX": 28604.23,
+      "HY_OAS": 273.0,
+      "fear_greed": 37.6,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 83.3
+    }
   }
 ]
