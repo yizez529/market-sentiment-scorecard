@@ -1734,5 +1734,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-07-23",
+    "timestamp_utc": "2026-07-23T05:20:49.419567Z",
+    "composite_score": 73.0,
+    "status_label": "严重超买",
+    "status_zone": "severe_overbought",
+    "dimension_scores": {
+      "volatility": 85.5,
+      "sentiment": 43.0,
+      "spx_breadth": 68.5,
+      "credit": 95.5,
+      "ndx": 54.9,
+      "cta": 100.0,
+      "momentum": 58.5
+    },
+    "headline": "综合 73 严重超买，指数稳但投机端塌陷加剧",
+    "verdict": "73 分严重超买 + CTA 满仓 + 投机端塌陷三重脆弱，45% 净多带 put，等破位不猜顶",
+    "key_indicators_snapshot": {
+      "VIX": 16.64,
+      "VXN": 26.74,
+      "SPX": 7498.96,
+      "NDX": 28998.1,
+      "HY_OAS": 269.0,
+      "fear_greed": 43.0,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
