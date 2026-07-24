@@ -2,10 +2,13 @@
 calculate_score.py
 基于抓取到的指标数据，计算 7 维度子评分和综合加权评分（0-100）。
 0 = 极度超卖（恐慌底），100 = 极度超买（顶部）。
+支持 regime modifier：在 Warsh 低指引模式下行动阈值收紧。
 """
 import json
 import os
 from typing import Dict, Any, Tuple
+
+from portfolio_config import get_regime_modifier, REGIME
 
 
 # ========== 7 维度权重 ==========
@@ -52,10 +55,12 @@ def score_volatility(data: Dict[str, Any]) -> Tuple[float, Dict[str, Any]]:
     components = []
 
     if vix is not None:
-        # VIX 12 = 100, VIX 50 = 0
-        s = linear_score(vix, 12, 50, invert=True)
+        # VIX complacency floor adjusted by regime (normal=15, low_guidance=16)
+        regime = get_regime_modifier()
+        vix_floor = regime.get("vix_complacency", 15)
+        s = linear_score(vix, vix_floor, 50, invert=True)
         components.append((s, 0.5))
-        notes["VIX"] = f"{vix} → {s:.0f}"
+        notes["VIX"] = f"{vix} → {s:.0f} (floor={vix_floor})"
     if vxn is not None:
         s = linear_score(vxn, 16, 55, invert=True)
         components.append((s, 0.3))
@@ -338,28 +343,32 @@ def calculate_composite(indicators: Dict[str, Any]) -> Dict[str, Any]:
     composite = sum(scores[k][0] * WEIGHTS[k] for k in WEIGHTS)
     composite = round(composite, 1)
 
-    # 状态分类
-    if composite < 15:
+    # Regime modifier: 在低指引模式下行动阈值收紧
+    regime = get_regime_modifier()
+    shift = regime["threshold_shift"]  # normal=0, low_guidance=-5, crisis=-10
+
+    # 状态分类（阈值随 regime 调整）
+    if composite < 15 + shift:
         status_label = "极度超卖 / 恐慌底"
         status_color = "success"
         status_zone = "extreme_oversold"
-    elif composite < 30:
+    elif composite < 30 + shift:
         status_label = "严重超卖"
         status_color = "success"
         status_zone = "severe_oversold"
-    elif composite < 45:
+    elif composite < 45 + shift:
         status_label = "偏超卖"
         status_color = "info"
         status_zone = "moderate_oversold"
-    elif composite < 55:
+    elif composite < 55 + shift:
         status_label = "中性"
         status_color = "default"
         status_zone = "neutral"
-    elif composite < 70:
+    elif composite < 70 + shift:
         status_label = "偏超买"
         status_color = "warning"
         status_zone = "moderate_overbought"
-    elif composite < 85:
+    elif composite < 85 + shift:
         status_label = "严重超买"
         status_color = "warning"
         status_zone = "severe_overbought"
@@ -373,6 +382,8 @@ def calculate_composite(indicators: Dict[str, Any]) -> Dict[str, Any]:
         "status_label": status_label,
         "status_color": status_color,
         "status_zone": status_zone,
+        "regime": regime["label"],
+        "regime_shift": shift,
         "weights": WEIGHTS,
         "dimensions": {
             k: {

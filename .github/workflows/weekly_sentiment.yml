@@ -1,12 +1,10 @@
-name: Daily Market Sentiment Scorecard
+name: Weekly Market Sentiment Scorecard
 
 on:
-  # 每天北京时间 10:00 = UTC 02:00
-  # 周二到周六（cron dow 2-6），对应美股周一到周五收盘后数据
-  # 周一 UTC 02:00 时美股尚未开盘，数据等同周六——因此跳过周一
+  # 每周一北京时间 10:00 = UTC 02:00
+  # 覆盖上周全部 5 个交易日的市场数据
   schedule:
-    - cron: '0 2 * * 2-6'
-  # 允许手动触发，可选择只跑 smoke-test
+    - cron: '0 2 * * 1'
   workflow_dispatch:
     inputs:
       mode:
@@ -19,7 +17,7 @@ on:
           - full
 
 permissions:
-  contents: write   # 推送 history.json 和 docs/
+  contents: write
   pages: write
   id-token: write
 
@@ -45,7 +43,13 @@ jobs:
       - name: Check all scripts importable
         run: |
           cd scripts
-          python -c "import fetch_indicators, calculate_score, claude_analysis, generate_html, feishu_card, run_daily, sectors_config, fetch_sectors, score_sectors, sectors_pe_benchmarks, fetch_fundamentals, fundamentals_temperature; print('✅ All 12 scripts import OK')"
+          python -c "
+          import fetch_indicators, calculate_score, claude_analysis, generate_html, feishu_card
+          import run_daily, sectors_config, fetch_sectors, score_sectors, sectors_pe_benchmarks
+          import fetch_fundamentals, fundamentals_temperature
+          import portfolio_config, divergence_detector, anomaly_check
+          print('✅ All scripts import OK')
+          "
 
       - name: Check required env vars present
         env:
@@ -56,20 +60,9 @@ jobs:
         run: |
           if [ -z "$ANTHROPIC_API_KEY" ]; then echo "❌ ANTHROPIC_API_KEY missing"; exit 1; fi
           if [ -z "$FEISHU_WEBHOOK" ]; then echo "❌ FEISHU_WEBHOOK missing"; exit 1; fi
-          if [ -z "$FRED_API_KEY" ]; then echo "⚠️  FRED_API_KEY missing (HY/IG OAS will be N/A)"; fi
-          if [ -z "$FMP_API_KEY" ]; then echo "⚠️  FMP_API_KEY missing (Basket 板块基本面温度将为❓)"; fi
+          if [ -z "$FRED_API_KEY" ]; then echo "⚠️  FRED_API_KEY missing"; fi
+          if [ -z "$FMP_API_KEY" ]; then echo "⚠️  FMP_API_KEY missing"; fi
           echo "✅ Required env vars present"
-
-      - name: Test Feishu webhook
-        env:
-          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
-        run: |
-          response=$(curl -s -X POST "$FEISHU_WEBHOOK" \
-            -H 'Content-Type: application/json' \
-            -d '{"msg_type":"text","content":{"text":"[smoke-test] market-sentiment-scorecard deployment OK"}}')
-          echo "Response: $response"
-          echo "$response" | grep -q '"code":0' || (echo "❌ Feishu webhook test failed"; exit 1)
-          echo "✅ Feishu webhook OK"
 
   scan:
     needs: smoke-test
@@ -91,7 +84,7 @@ jobs:
       - name: Install deps
         run: pip install -r requirements.txt
 
-      - name: Run daily scorecard
+      - name: Run weekly scorecard
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
@@ -104,11 +97,11 @@ jobs:
         run: |
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
-          git add data/history.json docs/
+          git add data/ docs/
           if git diff --cached --quiet; then
             echo "Nothing to commit"
           else
-            git commit -m "chore(daily): update scorecard $(date -u +%Y-%m-%d)"
+            git commit -m "chore(weekly): update scorecard $(date -u +%Y-%m-%d)"
             git push
           fi
 

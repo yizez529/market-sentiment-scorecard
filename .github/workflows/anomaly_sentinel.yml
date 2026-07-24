@@ -1,0 +1,48 @@
+name: Anomaly Sentinel (Daily Check)
+
+on:
+  # 每个交易日北京时间 10:00 = UTC 02:00
+  # 周二到周六（对应美股周一到周五收盘后）
+  schedule:
+    - cron: '0 2 * * 2-6'
+  workflow_dispatch:
+    inputs:
+      force_alert:
+        description: 'Force alert regardless of thresholds'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: pip-${{ hashFiles('requirements.txt') }}
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: Run anomaly check
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+          PAGE_URL: https://${{ github.repository_owner }}.github.io/market-sentiment-scorecard/
+        run: python scripts/anomaly_check.py

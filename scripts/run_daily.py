@@ -198,9 +198,49 @@ def main():
         traceback.print_exc()
         # 不阻塞主流程
 
+    # === 2d. Divergence detection ===
+    print("\n" + "=" * 60)
+    print("STEP 2d: Divergence detection")
+    print("=" * 60)
+    divergences = []
+    try:
+        from divergence_detector import detect_divergences
+        dim_scores = {k: v["score"] for k, v in score["dimensions"].items()}
+        # 获取上期分数用于趋势比较
+        prev_dim_scores = None
+        if os.path.exists(history_path):
+            try:
+                with open(history_path) as f:
+                    hist_list = json.load(f)
+                if hist_list:
+                    prev_dim_scores = hist_list[-1].get("dimension_scores")
+            except Exception:
+                pass
+        divergences = detect_divergences(dim_scores, prev_dim_scores)
+        if divergences:
+            print(f"⚡ 检测到 {len(divergences)} 个背离:")
+            for d in divergences:
+                print(f"  {d['emoji']} {d['pattern']}: {d['description']}")
+        else:
+            print("✅ 无显著背离")
+    except Exception as e:
+        print(f"⚠️ Divergence detection failed: {e}")
+
+    # === 2e. Portfolio exposure ===
+    print("\n" + "=" * 60)
+    print("STEP 2e: Portfolio exposure mapping")
+    print("=" * 60)
+    portfolio_exposure = None
+    try:
+        from portfolio_config import get_sector_exposure
+        portfolio_exposure = get_sector_exposure()
+        print(f"持仓覆盖 {len(portfolio_exposure)} 个板块")
+    except Exception as e:
+        print(f"⚠️ Portfolio mapping failed: {e}")
+
     # === 3. Claude analysis ===
     print("\n" + "=" * 60)
-    print("STEP 3: Claude Opus 4.7 analysis")
+    print("STEP 3: Claude Opus 4.7 analysis (weekly)")
     print("=" * 60)
     history_for_context = None
     if os.path.exists(history_path):
@@ -213,7 +253,8 @@ def main():
             pass
 
     try:
-        analysis = call_claude(indicators, score, history_for_context, sectors_scored, temperatures)
+        analysis = call_claude(indicators, score, history_for_context, sectors_scored, temperatures,
+                               divergences=divergences, portfolio_exposure=portfolio_exposure)
     except Exception as e:
         print(f"❌ Claude failed: {e}")
         traceback.print_exc()

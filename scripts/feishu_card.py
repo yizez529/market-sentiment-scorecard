@@ -104,13 +104,14 @@ def build_card(score: Dict, analysis: Dict, indicators: Dict, page_url: str, sec
         },
     ]
 
-    # vs 上期变化
-    if key_changes and key_changes not in ("N/A", "first_run"):
+    # vs 上周变化
+    weekly_delta = a.get("weekly_delta_summary", key_changes)
+    if weekly_delta and weekly_delta not in ("N/A", "first_run"):
         elements.append({
             "tag": "div",
             "text": {
                 "tag": "lark_md",
-                "content": f"**📊 vs 昨日变化**\n{key_changes}"
+                "content": f"**📊 本周变化**\n{weekly_delta}"
             },
         })
 
@@ -148,6 +149,34 @@ def build_card(score: Dict, analysis: Dict, indicators: Dict, page_url: str, sec
         })
 
     elements.append({"tag": "hr"})
+
+    # === 背离警报面板 ===
+    divergence_interpretation = a.get("divergence_interpretation", "")
+    if divergence_interpretation and divergence_interpretation != "N/A" and "无显著背离" not in divergence_interpretation:
+        elements.append({
+            "tag": "div",
+            "text": {"tag": "lark_md", "content": f"**⚡ 背离警报**\n{divergence_interpretation}"}
+        })
+        elements.append({"tag": "hr"})
+
+    # === 持仓风险提示 ===
+    portfolio_risk = a.get("portfolio_risk_note", "")
+    if portfolio_risk and portfolio_risk != "N/A":
+        elements.append({
+            "tag": "div",
+            "text": {"tag": "lark_md", "content": f"**📋 持仓风险提示**\n{portfolio_risk}"}
+        })
+        elements.append({"tag": "hr"})
+
+    # === 周末事件 + 下周关注 ===
+    weekend = a.get("weekend_events", [])
+    if weekend:
+        weekend_text = "\n".join(f"• {w}" for w in weekend[:4])
+        elements.append({
+            "tag": "div",
+            "text": {"tag": "lark_md", "content": f"**📅 周末事件 & 下周关注**\n{weekend_text}"}
+        })
+        elements.append({"tag": "hr"})
 
     # === 板块情绪面板（Top 5 最超买 + Top 5 最超卖） ===
     if sectors_scored and sectors_scored.get("all_scored"):
@@ -240,7 +269,7 @@ def build_card(score: Dict, analysis: Dict, indicators: Dict, page_url: str, sec
     card = {
         "config": {"wide_screen_mode": True, "enable_forward": True},
         "header": {
-            "title": {"tag": "plain_text", "content": "🇺🇸 美股市场情绪日报"},
+            "title": {"tag": "plain_text", "content": "🇺🇸 美股市场情绪周报"},
             "template": color,
         },
         "elements": elements,
