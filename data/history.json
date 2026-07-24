@@ -1762,5 +1762,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-07-24",
+    "timestamp_utc": "2026-07-24T05:16:53.916534Z",
+    "composite_score": 66.8,
+    "status_label": "偏超买",
+    "status_zone": "moderate_overbought",
+    "dimension_scores": {
+      "volatility": 81.7,
+      "sentiment": 39.7,
+      "spx_breadth": 62.9,
+      "credit": 95.6,
+      "ndx": 49.6,
+      "cta": 83.3,
+      "momentum": 49.6
+    },
+    "headline": "综合 66.8 偏超买，指数回落但投机端加速塌陷",
+    "verdict": "66.8 偏超买 + CTA 首次松手 + 投机长尾先崩，主线仍稳。持仓 50-55% 带 QQQ put，破 7300 再减不猜顶",
+    "key_indicators_snapshot": {
+      "VIX": 18.7,
+      "VXN": 28.06,
+      "SPX": 7408.3,
+      "NDX": 28454.81,
+      "HY_OAS": 268.0,
+      "fear_greed": 39.7,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 83.3
+    }
   }
 ]
