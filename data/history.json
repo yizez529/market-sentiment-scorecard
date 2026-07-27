@@ -1790,5 +1790,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 83.3
     }
+  },
+  {
+    "as_of": "2026-07-27",
+    "timestamp_utc": "2026-07-27T05:44:12.036125Z",
+    "composite_score": 67.4,
+    "status_label": "严重超买",
+    "status_zone": "severe_overbought",
+    "dimension_scores": {
+      "volatility": 86.6,
+      "sentiment": 39.4,
+      "spx_breadth": 62.9,
+      "credit": 94.3,
+      "ndx": 49.6,
+      "cta": 83.3,
+      "momentum": 49.6
+    },
+    "headline": "综合 67.4 严重超买，主线稳投机长尾崩塌加深",
+    "verdict": "67.4 严重超买 + 三重背离已成型，仓位 50-55% 带对冲，破 7300 或 OAS 破 300 立即减到 40",
+    "key_indicators_snapshot": {
+      "VIX": 18.7,
+      "VXN": 28.06,
+      "SPX": 7408.3,
+      "NDX": 28454.81,
+      "HY_OAS": 277.0,
+      "fear_greed": 39.4,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 83.3
+    }
   }
 ]
