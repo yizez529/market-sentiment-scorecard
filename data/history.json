@@ -1818,5 +1818,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 83.3
     }
+  },
+  {
+    "as_of": "2026-08-03",
+    "timestamp_utc": "2026-08-03T05:36:46.339928Z",
+    "composite_score": 73.6,
+    "status_label": "严重超买",
+    "status_zone": "severe_overbought",
+    "dimension_scores": {
+      "volatility": 92.1,
+      "sentiment": 42.5,
+      "spx_breadth": 67.0,
+      "credit": 93.2,
+      "ndx": 53.8,
+      "cta": 100.0,
+      "momentum": 59.7
+    },
+    "headline": "综合 73.6 严重超买，主线加速长尾深陷冰点",
+    "verdict": "73.6 严重超买 + CTA 触顶 + 三重背离深化，仓位降至 45-50% 加对冲，静候 CTA 松动或 VIX 破 18 再动手",
+    "key_indicators_snapshot": {
+      "VIX": 15.99,
+      "VXN": 26.0,
+      "SPX": 7489.72,
+      "NDX": 28274.2,
+      "HY_OAS": 284.0,
+      "fear_greed": 42.5,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
