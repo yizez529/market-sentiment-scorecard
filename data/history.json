@@ -1874,5 +1874,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-08-17",
+    "timestamp_utc": "2026-08-17T02:54:59.542321Z",
+    "composite_score": 83.4,
+    "status_label": "极度超买 / 顶部",
+    "status_zone": "extreme_overbought",
+    "dimension_scores": {
+      "volatility": 96.2,
+      "sentiment": 57.9,
+      "spx_breadth": 81.8,
+      "credit": 94.9,
+      "ndx": 72.3,
+      "cta": 100.0,
+      "momentum": 76.3
+    },
+    "headline": "综合 83.4 极度超买，Warsh 模式顶部风险持续",
+    "verdict": "83.4 极度超买 + CTA 满仓 + 广度收窄，仓位降至 40-45% 并买尾部对冲，Jackson Hole 前不做方向",
+    "key_indicators_snapshot": {
+      "VIX": 14.25,
+      "VXN": 20.72,
+      "SPX": 7785.76,
+      "NDX": 30046.14,
+      "HY_OAS": 271.0,
+      "fear_greed": 65.0,
+      "AAII_spread": -3.2,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
