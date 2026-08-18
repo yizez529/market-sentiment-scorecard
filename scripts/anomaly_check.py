@@ -133,7 +133,10 @@ def build_anomaly_card(anomalies: list, score: dict, analysis: dict,
     # 异常摘要
     anomaly_lines = []
     for t in anomalies:
-        anomaly_lines.append(f"{t['emoji']} **{t['summary']}**")
+        line = f"{t['emoji']} **{t['summary']}**"
+        if t.get("_unverifiable"):
+            line += "\n   ⚠️ 未通过跨源校验（无可比数据源），建议自行核实后再据此调整仓位"
+        anomaly_lines.append(line)
     anomaly_text = "\n".join(anomaly_lines)
 
     # 受冲击的持仓
@@ -262,11 +265,65 @@ def main():
         print("✅ 无异常触发，静默退出")
         return  # 正常退出，不推送
 
-    print(f"🚨 检测到 {len(anomalies)} 个异常:")
+    print(f"🚨 检测到 {len(anomalies)} 个原始异常读数（校验前）:")
     for a in anomalies:
         print(f"  {a['emoji']} {a['summary']}")
 
-    # Step 3: 有异常，跑完整评分
+    # Step 2.5: 数据完整性兜底校验 —— 只对已触发阈值的指标做交叉验证，
+    # 避免 yfinance 缓存脏读/行错位导致的假异常被当成真实市场异常推送。
+    # （背景：2026-08-06 曾误报 "SPX 单日暴涨 2.19%"，事后核实真实数据对不上任何一天）
+    print("\n" + "=" * 60)
+    print("ANOMALY SENTINEL: Data integrity guard")
+    print("=" * 60)
+
+    guardable = {a["indicator"] for a in anomalies if a["indicator"] in ("SPX", "NDX")}
+    guard_results = {}
+    if guardable:
+        try:
+            from data_guard import run_guard_for
+            fred_key = os.environ.get("FRED_API_KEY", "")
+            guard_results = run_guard_for(guardable, indicators, fred_key, data_dir)
+            for name, g in guard_results.items():
+                print(f"  [{name}] trusted={g['trusted']} | {g['reason']}")
+                print(f"    stale_cache: {g['stale_cache']['note']}")
+                print(f"    cross_validation: {g['cross_validation']['note']}")
+        except Exception as e:
+            print(f"⚠️ 数据校验层运行失败（不阻断主流程，按原逻辑放行）: {e}")
+            traceback.print_exc()
+
+    confirmed, distrusted = [], []
+    for a in anomalies:
+        g = guard_results.get(a["indicator"])
+        if g is None:
+            confirmed.append(a)  # VIX / HY_OAS 等暂未纳入校验范围，按原逻辑放行
+            continue
+        a["_guard"] = g
+        if g["trusted"] is False:
+            distrusted.append(a)
+        elif g["trusted"] is True:
+            confirmed.append(a)
+        else:
+            a["_unverifiable"] = True
+            confirmed.append(a)  # 无法确认时仍然推送，但卡片里会带上警示，不隐瞒不确定性
+
+    if distrusted:
+        print(f"\n🛑 {len(distrusted)} 个异常读数未通过校验，判定疑似脏读，不计入推送:")
+        for a in distrusted:
+            print(f"  ❌ {a['summary']} | {a.get('_guard', {}).get('reason', '')}")
+
+    if not confirmed:
+        print("\n所有触发的异常均未通过数据校验，本次不推送异常警报。")
+        if webhook and distrusted:
+            from data_guard import build_integrity_notice_card
+            from feishu_card import send_to_feishu
+            card = build_integrity_notice_card(distrusted, page_url)
+            result = send_to_feishu(webhook, card)
+            print(f"数据完整性告警推送结果: {result}")
+        return
+
+    anomalies = confirmed
+
+    # Step 3: 有（校验通过的）异常，跑完整评分
     print("\n" + "=" * 60)
     print("ANOMALY SENTINEL: Full scoring (anomaly triggered)")
     print("=" * 60)
