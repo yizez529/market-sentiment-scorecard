@@ -1930,5 +1930,33 @@
       "AAII_spread": -4.4,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-08-31",
+    "timestamp_utc": "2026-08-31T07:59:03.933620Z",
+    "composite_score": 76.1,
+    "status_label": "严重超买",
+    "status_zone": "severe_overbought",
+    "dimension_scores": {
+      "volatility": 96.8,
+      "sentiment": 47.4,
+      "spx_breadth": 74.5,
+      "credit": 95.8,
+      "ndx": 56.5,
+      "cta": 100.0,
+      "momentum": 55.5
+    },
+    "headline": "综合 76.1 严重超买，本周内部分化加剧",
+    "verdict": "76.1 严重超买+广度崩坏，本周主动减仓 5-10%，用 15 的 VIX 买保险",
+    "key_indicators_snapshot": {
+      "VIX": 15.26,
+      "VXN": 19.92,
+      "SPX": 7711.76,
+      "NDX": 29433.43,
+      "HY_OAS": 263.0,
+      "fear_greed": 54.4,
+      "AAII_spread": -11.5,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
