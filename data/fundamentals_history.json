@@ -1150,5 +1150,197 @@
         "peg": 0.52
       }
     }
+  },
+  {
+    "as_of_date": "2026-09-07",
+    "timestamp_utc": "2026-09-07T06:53:51.153739Z",
+    "sectors": {
+      "ai_semis": {
+        "forward_pe": 38.73,
+        "avg_eps_estimate": null,
+        "eps_growth_pct": null,
+        "peg": null
+      },
+      "semi_equipment": {
+        "forward_pe": 38.21,
+        "avg_eps_estimate": null,
+        "eps_growth_pct": null,
+        "peg": null
+      },
+      "optical_networking": {
+        "forward_pe": null,
+        "avg_eps_estimate": null,
+        "eps_growth_pct": null,
+        "peg": null
+      },
+      "quantum": {
+        "forward_pe": null,
+        "avg_eps_estimate": null,
+        "eps_growth_pct": null,
+        "peg": null
+      },
+      "neocloud": {
+        "forward_pe": null,
+        "avg_eps_estimate": null,
+        "eps_growth_pct": null,
+        "peg": null
+      },
+      "dc_self_power": {
+        "forward_pe": null,
+        "avg_eps_estimate": null,
+        "eps_growth_pct": null,
+        "peg": null
+      },
+      "ai_power_equip": {
+        "forward_pe": null,
+        "avg_eps_estimate": null,
+        "eps_growth_pct": null,
+        "peg": null
+      },
+      "dc_cooling": {
+        "forward_pe": null,
+        "avg_eps_estimate": null,
+        "eps_growth_pct": null,
+        "peg": null
+      },
+      "megacap_tech": {
+        "forward_pe": 33.15,
+        "avg_eps_estimate": null,
+        "eps_growth_pct": null,
+        "peg": null
+      },
+      "saas": {
+        "forward_pe": 32.52,
+        "avg_eps_estimate": null,
+        "eps_growth_pct": null,
+        "peg": null
+      },
+      "cybersecurity": {
+        "forward_pe": 31.35,
+        "avg_eps_estimate": null,
+        "eps_growth_pct": null,
+        "peg": null
+      },
+      "autonomy": {
+        "forward_pe": 86.94,
+        "avg_eps_estimate": 3.337,
+        "eps_growth_pct": 32.04,
+        "peg": 2.71
+      },
+      "defense": {
+        "forward_pe": 46.24,
+        "avg_eps_estimate": 17.478,
+        "eps_growth_pct": 29.3,
+        "peg": 1.58
+      },
+      "commercial_space": {
+        "forward_pe": null,
+        "avg_eps_estimate": null,
+        "eps_growth_pct": null,
+        "peg": null
+      },
+      "drones": {
+        "forward_pe": null,
+        "avg_eps_estimate": null,
+        "eps_growth_pct": null,
+        "peg": null
+      },
+      "ai_power": {
+        "forward_pe": null,
+        "avg_eps_estimate": null,
+        "eps_growth_pct": null,
+        "peg": null
+      },
+      "energy": {
+        "forward_pe": 17.77,
+        "avg_eps_estimate": null,
+        "eps_growth_pct": null,
+        "peg": null
+      },
+      "nuclear": {
+        "forward_pe": null,
+        "avg_eps_estimate": null,
+        "eps_growth_pct": null,
+        "peg": null
+      },
+      "utilities": {
+        "forward_pe": 19.4,
+        "avg_eps_estimate": null,
+        "eps_growth_pct": null,
+        "peg": null
+      },
+      "storage": {
+        "forward_pe": null,
+        "avg_eps_estimate": null,
+        "eps_growth_pct": null,
+        "peg": null
+      },
+      "healthcare": {
+        "forward_pe": 30.63,
+        "avg_eps_estimate": null,
+        "eps_growth_pct": null,
+        "peg": null
+      },
+      "glp1": {
+        "forward_pe": null,
+        "avg_eps_estimate": null,
+        "eps_growth_pct": null,
+        "peg": null
+      },
+      "medicare_advantage": {
+        "forward_pe": 17.69,
+        "avg_eps_estimate": 22.448,
+        "eps_growth_pct": 16.79,
+        "peg": 1.05
+      },
+      "financials": {
+        "forward_pe": 16.47,
+        "avg_eps_estimate": null,
+        "eps_growth_pct": null,
+        "peg": null
+      },
+      "china_tech": {
+        "forward_pe": 13.15,
+        "avg_eps_estimate": null,
+        "eps_growth_pct": null,
+        "peg": null
+      },
+      "btc_spot": {
+        "forward_pe": null,
+        "avg_eps_estimate": null,
+        "eps_growth_pct": null,
+        "peg": null
+      },
+      "btc_miners": {
+        "forward_pe": 18.17,
+        "avg_eps_estimate": null,
+        "eps_growth_pct": null,
+        "peg": null
+      },
+      "crypto_brokers": {
+        "forward_pe": 56.98,
+        "avg_eps_estimate": 2.726,
+        "eps_growth_pct": 55.6,
+        "peg": 1.02
+      },
+      "industrials": {
+        "forward_pe": 28.46,
+        "avg_eps_estimate": null,
+        "eps_growth_pct": null,
+        "peg": null
+      },
+      "homebuilders": {
+        "forward_pe": 19.6,
+        "avg_eps_estimate": null,
+        "eps_growth_pct": null,
+        "peg": null
+      },
+      "commercial_aero": {
+        "forward_pe": 52.65,
+        "avg_eps_estimate": 4.031,
+        "eps_growth_pct": 100.74,
+        "peg": 0.52
+      }
+    }
   }
 ]
