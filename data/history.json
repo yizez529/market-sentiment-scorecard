@@ -1986,5 +1986,33 @@
       "AAII_spread": 2.1,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-09-14",
+    "timestamp_utc": "2026-09-14T07:27:08.613781Z",
+    "composite_score": 74.5,
+    "status_label": "严重超买",
+    "status_zone": "severe_overbought",
+    "dimension_scores": {
+      "volatility": 93.9,
+      "sentiment": 39.0,
+      "spx_breadth": 68.5,
+      "credit": 94.7,
+      "ndx": 60.5,
+      "cta": 100.0,
+      "momentum": 58.9
+    },
+    "headline": "评分 74.5 严重超买，指数走弱但拥挤未散",
+    "verdict": "机构未动散户先慌，兑现浮盈+挂对冲比择时减仓更优，等 FOMC 后再定方向。",
+    "key_indicators_snapshot": {
+      "VIX": 15.84,
+      "VXN": 21.02,
+      "SPX": 7656.98,
+      "NDX": 29368.44,
+      "HY_OAS": 270.0,
+      "fear_greed": 33.3,
+      "AAII_spread": -1.3,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
