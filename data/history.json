@@ -2070,5 +2070,33 @@
       "AAII_spread": -15.4,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-10-05",
+    "timestamp_utc": "2026-10-05T08:05:28.537487Z",
+    "composite_score": 75.6,
+    "status_label": "严重超买",
+    "status_zone": "severe_overbought",
+    "dimension_scores": {
+      "volatility": 88.8,
+      "sentiment": 32.7,
+      "spx_breadth": 68.8,
+      "credit": 87.0,
+      "ndx": 81.1,
+      "cta": 100.0,
+      "momentum": 68.1
+    },
+    "headline": "综合 75.6 严重超买，信用背离敲响警钟",
+    "verdict": "表面平静内部已裂，减仓 20% 买保护，等 HY OAS 或 VIX 给出下一次方向性信号。",
+    "key_indicators_snapshot": {
+      "VIX": 16.29,
+      "VXN": 21.2,
+      "SPX": 7722.72,
+      "NDX": 30807.93,
+      "HY_OAS": 324.0,
+      "fear_greed": 31.2,
+      "AAII_spread": -11.9,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
