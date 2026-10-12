@@ -2098,5 +2098,33 @@
       "AAII_spread": -11.9,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-10-12",
+    "timestamp_utc": "2026-10-12T08:25:27.172818Z",
+    "composite_score": 76.8,
+    "status_label": "严重超买",
+    "status_zone": "severe_overbought",
+    "dimension_scores": {
+      "volatility": 91.3,
+      "sentiment": 47.5,
+      "spx_breadth": 72.1,
+      "credit": 89.2,
+      "ndx": 68.2,
+      "cta": 100.0,
+      "momentum": 64.9
+    },
+    "headline": "综合 76.8 严重超买，CTA 顶格 + 情绪回暖推升",
+    "verdict": "顶部犒赏延长战，不加不减守 70% 仓位，等 CPI + 财报季给方向性答案",
+    "key_indicators_snapshot": {
+      "VIX": 15.4,
+      "VXN": 20.55,
+      "SPX": 7811.54,
+      "NDX": 30883.15,
+      "HY_OAS": 315.0,
+      "fear_greed": 45.0,
+      "AAII_spread": 1.3,
+      "CTA_proxy_pct": 100
+    }
   }
 ]
