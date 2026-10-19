@@ -2126,5 +2126,33 @@
       "AAII_spread": 1.3,
       "CTA_proxy_pct": 100
     }
+  },
+  {
+    "as_of": "2026-10-19",
+    "timestamp_utc": "2026-10-19T07:12:17.521849Z",
+    "composite_score": 62.8,
+    "status_label": "偏超买",
+    "status_zone": "moderate_overbought",
+    "dimension_scores": {
+      "volatility": 79.9,
+      "sentiment": 28.6,
+      "spx_breadth": 62.2,
+      "credit": 87.7,
+      "ndx": 37.4,
+      "cta": 83.3,
+      "momentum": 53.0
+    },
+    "headline": "综合 62.8 偏超买，内部撕裂加剧，CTA 顶格但 NDX 已超卖",
+    "verdict": "指数未破人心已散，CTA 未解仓是最后 anchor，守 70% 等 NDX 二次确认再出手",
+    "key_indicators_snapshot": {
+      "VIX": 19.99,
+      "VXN": 27.13,
+      "SPX": 7659.44,
+      "NDX": 29187.55,
+      "HY_OAS": 323.0,
+      "fear_greed": 17.9,
+      "AAII_spread": -2.9,
+      "CTA_proxy_pct": 83.3
+    }
   }
 ]
