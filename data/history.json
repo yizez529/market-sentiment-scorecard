@@ -2154,5 +2154,33 @@
       "AAII_spread": -2.9,
       "CTA_proxy_pct": 83.3
     }
+  },
+  {
+    "as_of": "2026-10-26",
+    "timestamp_utc": "2026-10-26T07:18:40.002089Z",
+    "composite_score": 60.6,
+    "status_label": "偏超买",
+    "status_zone": "moderate_overbought",
+    "dimension_scores": {
+      "volatility": 79.4,
+      "sentiment": 27.7,
+      "spx_breadth": 59.5,
+      "credit": 84.3,
+      "ndx": 41.1,
+      "cta": 83.3,
+      "momentum": 42.9
+    },
+    "headline": "综合 60.6 偏超买，但指数掩盖内部深度撕裂",
+    "verdict": "指数未破人心已散，CTA 顶格是最后 anchor，守 70% 等 FOMC + 大厂财报再定方向",
+    "key_indicators_snapshot": {
+      "VIX": 19.45,
+      "VXN": 28.3,
+      "SPX": 7623.68,
+      "NDX": 28957.53,
+      "HY_OAS": 340.0,
+      "fear_greed": 21.0,
+      "AAII_spread": -8.9,
+      "CTA_proxy_pct": 83.3
+    }
   }
 ]
