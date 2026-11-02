@@ -2182,5 +2182,33 @@
       "AAII_spread": -8.9,
       "CTA_proxy_pct": 83.3
     }
+  },
+  {
+    "as_of": "2026-11-02",
+    "timestamp_utc": "2026-11-02T08:44:57.849896Z",
+    "composite_score": 56.6,
+    "status_label": "偏超买",
+    "status_zone": "moderate_overbought",
+    "dimension_scores": {
+      "volatility": 80.4,
+      "sentiment": 27.6,
+      "spx_breadth": 56.4,
+      "credit": 85.9,
+      "ndx": 31.9,
+      "cta": 66.7,
+      "momentum": 39.5
+    },
+    "headline": "综合 56.6 偏超买，内部撕裂加剧，CTA 支撑松动",
+    "verdict": "指数未破人心已散，CTA 松动是红灯；守 65-70% 等 NDX 探 200MA 再定方向",
+    "key_indicators_snapshot": {
+      "VIX": 19.03,
+      "VXN": 28.5,
+      "SPX": 7580.07,
+      "NDX": 28384.85,
+      "HY_OAS": 326.0,
+      "fear_greed": 27.6,
+      "AAII_spread": null,
+      "CTA_proxy_pct": 66.7
+    }
   }
 ]
