@@ -2210,5 +2210,33 @@
       "AAII_spread": null,
       "CTA_proxy_pct": 66.7
     }
+  },
+  {
+    "as_of": "2026-11-09",
+    "timestamp_utc": "2026-11-09T08:57:12.288217Z",
+    "composite_score": 48.7,
+    "status_label": "中性",
+    "status_zone": "neutral",
+    "dimension_scores": {
+      "volatility": 69.9,
+      "sentiment": 26.8,
+      "spx_breadth": 44.4,
+      "credit": 82.2,
+      "ndx": 37.5,
+      "cta": 33.3,
+      "momentum": 39.7
+    },
+    "headline": "综合 48.7 回落中性，AI 产业链全线超卖、情绪极度恐慌",
+    "verdict": "指数跌幅温和但 AI 板块已 capitulate，守 65-70%、分批抄底超卖板块，等 CTA 翻多确认加仓",
+    "key_indicators_snapshot": {
+      "VIX": 24.26,
+      "VXN": 34.02,
+      "SPX": 7376.86,
+      "NDX": 26989.99,
+      "HY_OAS": 348.0,
+      "fear_greed": 23.6,
+      "AAII_spread": -14.3,
+      "CTA_proxy_pct": 33.3
+    }
   }
 ]
