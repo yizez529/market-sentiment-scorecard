@@ -81,19 +81,14 @@ push 成功后会看到类似 `Branch 'main' set up to track 'origin/main'`。
 
 | Name | Value | 在哪里拿 |
 |------|-------|---------|
-| `ANTHROPIC_API_KEY` | `sk-ant-xxxx...` | https://console.anthropic.com/settings/keys |
-| `FEISHU_WEBHOOK` | `https://open.feishu.cn/open-apis/bot/v2/hook/23517c05-1423-4f82-a381-6238f86aec3a` | （已有） |
+| `OPENAI_API_KEY` | `sk-xxxx...` | https://platform.openai.com/api-keys |
+| `FEISHU_WEBHOOK` | `https://open.feishu.cn/open-apis/bot/v2/hook/<webhook-id>` | （已有） |
 | `FRED_API_KEY` | `xxxxxxxx` | 免费注册 https://fred.stlouisfed.org/docs/api/api_key.html （5 分钟） |
 
-### ⚠️ Anthropic API 重要提醒（血泪教训）
+### OpenAI API
 
-- **Anthropic API credits ≠ Claude.ai Pro 订阅**，是两个独立的钱包
-- 这个 skill 用 Opus 4.7，每次调用约 $0.05-0.06
-- 月跑 26 次（一到六）≈ **$1.5-2/月**
-- 去 https://console.anthropic.com/settings/billing 充至少 **$5**（够跑 80+ 次）
-- **创建 API key 和充值要在同一个 workspace**——console 左上角下拉框，建议都用 `Default` workspace
+Configure `OPENAI_API_KEY` in repository Actions Secrets. The weekly report logs token usage and estimated cost.
 
----
 
 ## Step 4：开启 GitHub Pages
 
@@ -162,9 +157,9 @@ cron `0 2 * * 1-6` = UTC 02:00 周一到周六 = **北京时间 10:00 周一到�
 2. 如果 `code != 0`：webhook 配错了
 3. 如果 `code == 19021`：飞书机器人开了关键词/签名校验，但 webhook 测试不带这些。去飞书机器人配置里关掉关键词验证
 
-### Q2: Claude 分析失败（评分能跑出来但 headline 是 "Claude 分析失败"）？
+### Q2: GPT 分析失败（评分能跑出来但 headline 是 "GPT 分析失败"）？
 
-GitHub Actions 日志里搜 `[Claude] Raw output length`：
+GitHub Actions 日志里搜 `[GPT] Raw output length`：
 
 - 没有这行 → API 调用失败。看错误信息是 `credit balance too low` (充钱) 还是 timeout (重跑)
 - 有这行但后面有 `All JSON parsing layers failed` → JSON 输出格式问题，把 raw output 那段贴给我
@@ -215,7 +210,7 @@ market-sentiment-scorecard/
 ├── scripts/
 │   ├── fetch_indicators.py    # 抓取所有指标
 │   ├── calculate_score.py     # 7 维度评分计算
-│   ├── claude_analysis.py     # 调用 Opus 4.7
+│   ├── gpt_analysis.py     # 调用 GPT-6.1 Sol
 │   ├── generate_html.py       # 生成 dashboard
 │   ├── feishu_card.py         # 飞书推送
 │   └── run_daily.py           # 主流程
