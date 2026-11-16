@@ -1,9 +1,9 @@
 """
-claude_analysis.py
-调用 Claude Opus 4.7 生成中文情绪分析。
+gpt_analysis.py
+调用 GPT-6.1 Sol 生成中文情绪分析。
 - 三重 JSON 容错（per skill best practice）
 - 首次失败就 dump 完整原始输出
-- 使用 prompt caching 降低成本（system prompt 不变）
+- 记录模型用量和估算成本
 """
 import os
 import json
@@ -12,11 +12,11 @@ import sys
 from datetime import datetime
 from typing import Dict, Any
 
-import anthropic
+from report_model import ResponseBudget
 
 
-MODEL = "claude-opus-4-7"
-MAX_TOKENS = 12000  # 31 板块简评 + 背离分析 + 持仓覆盖 + 周末事件
+MODEL = "gpt-6.1-sol"
+MAX_TOKENS = 9000
 
 
 SYSTEM_PROMPT_WEEKLY = """你是 Aaron 的美股市场情绪分析师。Aaron 是资深 buy-side 投资人，习惯结构化、conclusion-first 的中文输出。
@@ -121,16 +121,15 @@ SYSTEM_PROMPT_ANOMALY = """你是 Aaron 的美股市场异常分析师。当市�
 SYSTEM_PROMPT = SYSTEM_PROMPT_WEEKLY
 
 
-def call_claude(indicators: Dict, score: Dict, history: Dict = None,
+def call_gpt(indicators: Dict, score: Dict, history: Dict = None,
                 sectors_scored: Dict = None, temperatures: Dict = None,
                 anomaly_mode: bool = False, anomalies: list = None,
                 divergences: list = None, portfolio_exposure: dict = None) -> Dict[str, Any]:
-    """调用 Opus 4.7 生成分析（周报模式或异常模式）"""
-    api_key = os.environ.get("ANTHROPIC_API_KEY")
+    """调用 GPT-6.1 Sol 生成分析（周报模式或异常模式）"""
+    api_key = os.environ.get("OPENAI_API_KEY")
     if not api_key:
-        raise RuntimeError("ANTHROPIC_API_KEY missing")
+        raise RuntimeError("OPENAI_API_KEY missing")
 
-    client = anthropic.Anthropic(api_key=api_key)
 
     today = datetime.utcnow().strftime("%Y-%m-%d")
 
@@ -230,46 +229,13 @@ def call_claude(indicators: Dict, score: Dict, history: Dict = None,
             f"再次提醒：只输出一个有效 JSON，不要 markdown fence 或前言。"
         )
 
-    response = client.messages.create(
-        model=MODEL,
-        max_tokens=MAX_TOKENS,
-        system=[
-            {
-                "type": "text",
-                "text": system_prompt,
-                "cache_control": {"type": "ephemeral"},
-            }
-        ],
-        messages=[
-            {"role": "user", "content": user_msg},
-        ],
+    raw_text, usage = ResponseBudget().generate(
+        MODEL, system_prompt, user_msg, output=MAX_TOKENS, effort="low",
     )
-
-    raw_text = response.content[0].text
-    usage = response.usage
-
-    print(f"\n[Claude] Model: {MODEL}")
-    print(f"[Claude] Input tokens: {usage.input_tokens}")
-    print(f"[Claude] Output tokens: {usage.output_tokens}")
-    if hasattr(usage, "cache_creation_input_tokens"):
-        print(f"[Claude] Cache creation: {usage.cache_creation_input_tokens}")
-    if hasattr(usage, "cache_read_input_tokens"):
-        print(f"[Claude] Cache read: {usage.cache_read_input_tokens}")
-    print(f"[Claude] Raw output length: {len(raw_text)} chars")
-    print(f"[Claude] First 400 chars: {raw_text[:400]}")
-    print(f"[Claude] Last 200 chars: {raw_text[-200:]}")
-
-    # 三重 JSON 容错解析
-    parsed = parse_json_robust(raw_text)
     return {
-        "analysis": parsed,
+        "analysis": parse_json_robust(raw_text),
         "raw": raw_text,
-        "usage": {
-            "input_tokens": usage.input_tokens,
-            "output_tokens": usage.output_tokens,
-            "cache_creation_input_tokens": getattr(usage, "cache_creation_input_tokens", 0),
-            "cache_read_input_tokens": getattr(usage, "cache_read_input_tokens", 0),
-        },
+        "usage": usage,
         "model": MODEL,
     }
 
@@ -320,7 +286,7 @@ def parse_json_robust(text: str) -> Dict:
 
 
 def _summarize_indicators(indicators: Dict) -> Dict:
-    """提炼最关键的指标值传给 Claude（避免 prompt 过长）"""
+    """提炼最关键的指标值传给 GPT（避免 prompt 过长）"""
     market = indicators.get("market", {})
     fred = indicators.get("fred", {})
     cta = indicators.get("cta", {})
@@ -392,22 +358,22 @@ if __name__ == "__main__":
             print(f"  [history] failed to load: {e}")
 
     try:
-        result = call_claude(indicators, score, history, sectors_scored, temperatures)
+        result = call_gpt(indicators, score, history, sectors_scored, temperatures)
         with open(out_path, "w") as f:
             json.dump(result, f, indent=2, ensure_ascii=False)
         print(f"\n✅ Analysis saved to {out_path}")
         print(f"\nHeadline: {result['analysis'].get('headline', '(missing)')}")
     except Exception as e:
         # 即使失败，也写一个 fallback analysis 让 pipeline 继续
-        print(f"\n❌ Claude analysis failed: {e}")
+        print(f"\n❌ GPT analysis failed: {e}")
         sector_comments_fallback = {}
         if sectors_scored and "all_scored" in sectors_scored:
             for s in sectors_scored["all_scored"]:
                 sector_comments_fallback[s["sector"]["key"]] = f"{s['label']} (评分 {s['composite']})"
         fallback = {
             "analysis": {
-                "headline": f"评分 {score['composite_score']} ({score['status_label']}) — Claude 分析失败",
-                "main_drivers": ["Claude API 调用失败，仅显示原始评分"],
+                "headline": f"评分 {score['composite_score']} ({score['status_label']}) — GPT 分析失败",
+                "main_drivers": ["GPT API 调用失败，仅显示原始评分"],
                 "key_changes": "N/A",
                 "dimension_highlights": {k: "N/A" for k in score["dimensions"].keys()},
                 "investment_advice": {
@@ -417,9 +383,9 @@ if __name__ == "__main__":
                     "trigger_to_act": "N/A",
                 },
                 "next_to_watch": [],
-                "verdict": f"原始评分 {score['composite_score']}，Claude 分析失败请检查日志",
+                "verdict": f"原始评分 {score['composite_score']}，GPT 分析失败请检查日志",
                 "sector_comments": sector_comments_fallback,
-                "sector_rotation_summary": "N/A (Claude 分析失败)",
+                "sector_rotation_summary": "N/A (GPT 分析失败)",
             },
             "error": str(e),
             "model": MODEL,

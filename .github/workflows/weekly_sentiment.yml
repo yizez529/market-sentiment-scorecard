@@ -44,7 +44,7 @@ jobs:
         run: |
           cd scripts
           python -c "
-          import fetch_indicators, calculate_score, claude_analysis, generate_html, feishu_card
+          import fetch_indicators, calculate_score, gpt_analysis, generate_html, feishu_card
           import run_daily, sectors_config, fetch_sectors, score_sectors, sectors_pe_benchmarks
           import fetch_fundamentals, fundamentals_temperature
           import portfolio_config, divergence_detector, anomaly_check
@@ -53,12 +53,13 @@ jobs:
 
       - name: Check required env vars present
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_RUN_COST_CAP_USD: ${{ vars.OPENAI_RUN_COST_CAP_USD }}
           FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
           FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
         run: |
-          if [ -z "$ANTHROPIC_API_KEY" ]; then echo "❌ ANTHROPIC_API_KEY missing"; exit 1; fi
+          if [ -z "$OPENAI_API_KEY" ]; then echo "❌ OPENAI_API_KEY missing"; exit 1; fi
           if [ -z "$FEISHU_WEBHOOK" ]; then echo "❌ FEISHU_WEBHOOK missing"; exit 1; fi
           if [ -z "$FRED_API_KEY" ]; then echo "⚠️  FRED_API_KEY missing"; fi
           if [ -z "$FMP_API_KEY" ]; then echo "⚠️  FMP_API_KEY missing"; fi
@@ -86,7 +87,8 @@ jobs:
 
       - name: Run weekly scorecard
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_RUN_COST_CAP_USD: ${{ vars.OPENAI_RUN_COST_CAP_USD }}
           FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
           FMP_API_KEY: ${{ secrets.FMP_API_KEY }}

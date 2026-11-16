@@ -1,6 +1,6 @@
 """
 run_daily.py
-主流程：抓取 → 评分 → Claude 分析 → 生成 HTML → 推送飞书 → 写历史。
+主流程：抓取 → 评分 → GPT 分析 → 生成 HTML → 推送飞书 → 写历史。
 任何一步失败都尝试推送降级告警，不静默退出。
 """
 import os
@@ -19,7 +19,7 @@ from fetch_sectors import fetch_all_sectors
 from score_sectors import score_all_sectors
 from fetch_fundamentals import fetch_all_fundamentals
 from fundamentals_temperature import classify_all_sectors
-from claude_analysis import call_claude
+from gpt_analysis import call_gpt
 from generate_html import render_html, CSS
 from feishu_card import build_card, send_to_feishu
 
@@ -238,9 +238,9 @@ def main():
     except Exception as e:
         print(f"⚠️ Portfolio mapping failed: {e}")
 
-    # === 3. Claude analysis ===
+    # === 3. GPT analysis ===
     print("\n" + "=" * 60)
-    print("STEP 3: Claude Opus 4.7 analysis (weekly)")
+    print("STEP 3: GPT-6.1 Sol analysis (weekly)")
     print("=" * 60)
     history_for_context = None
     if os.path.exists(history_path):
@@ -253,10 +253,10 @@ def main():
             pass
 
     try:
-        analysis = call_claude(indicators, score, history_for_context, sectors_scored, temperatures,
+        analysis = call_gpt(indicators, score, history_for_context, sectors_scored, temperatures,
                                divergences=divergences, portfolio_exposure=portfolio_exposure)
     except Exception as e:
-        print(f"❌ Claude failed: {e}")
+        print(f"❌ GPT failed: {e}")
         traceback.print_exc()
         sector_comments_fallback = {}
         if sectors_scored and "all_scored" in sectors_scored:
@@ -264,8 +264,8 @@ def main():
                 sector_comments_fallback[s["sector"]["key"]] = f"{s['label']} (评分 {s['composite']})"
         analysis = {
             "analysis": {
-                "headline": f"评分 {score['composite_score']} ({score['status_label']}) — Claude 分析失败",
-                "main_drivers": [f"Claude API 错误: {str(e)[:100]}"],
+                "headline": f"评分 {score['composite_score']} ({score['status_label']}) — GPT 分析失败",
+                "main_drivers": [f"GPT API 错误: {str(e)[:100]}"],
                 "key_changes": "N/A",
                 "dimension_highlights": {},
                 "investment_advice": {
@@ -273,9 +273,9 @@ def main():
                     "do_not": "N/A", "trigger_to_act": "N/A",
                 },
                 "next_to_watch": [],
-                "verdict": "Claude 分析失败请检查 GitHub Actions 日志",
+                "verdict": "GPT 分析失败请检查 GitHub Actions 日志",
                 "sector_comments": sector_comments_fallback,
-                "sector_rotation_summary": "N/A (Claude 分析失败)",
+                "sector_rotation_summary": "N/A (GPT 分析失败)",
             },
             "error": str(e),
         }

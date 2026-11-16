@@ -36,7 +36,7 @@ GitHub Actions (周一到周六 北京 10:00)
     ├─ scan job (依赖 smoke-test 通过)
     │   ├─ fetch_indicators.py   抓取所有指标（多源 fallback）
     │   ├─ calculate_score.py    计算 7 维度子评分 + 加权综合
-    │   ├─ claude_analysis.py    调用 Opus 4.7 生成中文分析（三重 JSON 容错）
+    │   ├─ gpt_analysis.py    调用 GPT-6.1 Sol 生成中文分析（三重 JSON 容错）
     │   ├─ generate_html.py      生成 dashboard HTML（含完整指标指南）
     │   └─ feishu_card.py        推送飞书互动卡片（含跳转链接）
     │
@@ -50,7 +50,7 @@ GitHub Actions (周一到周六 北京 10:00)
 ## 运行成本
 
 - **GitHub Actions**: 每月 ~50 分钟，免费额度（2000 分钟）内
-- **Claude API (Opus 4.7)**: 每次约 $0.05-0.06（含 prompt caching），月跑 26 次约 $1.5-2
+- **OpenAI Responses API (`gpt-6.1-sol`)**: 周报分析，运行日志记录 token 用量及估算成本。
 - **数据源**: FRED / Yahoo Finance / CNN F&G / AAII / NAAIM 全部免费
 
 **月成本 ≈ $1.5 美元，年成本 ≈ $20 美元**
