@@ -50,7 +50,7 @@ GitHub Actions (周一到周六 北京 10:00)
 ## 运行成本
 
 - **GitHub Actions**: 每月 ~50 分钟，免费额度（2000 分钟）内
-- **OpenAI Responses API (`gpt-6.1-sol`)**: 周报分析，运行日志记录 token 用量及估算成本。
+- **OpenAI Responses API (`gpt-6.1-sol`)**: 周报分析，运行日志记录 token 用量及估算成本。默认单次估算上限 $0.20，可通过 `OPENAI_RUN_COST_CAP_USD` 覆盖。
 - **数据源**: FRED / Yahoo Finance / CNN F&G / AAII / NAAIM 全部免费
 
 **月成本 ≈ $1.5 美元，年成本 ≈ $20 美元**

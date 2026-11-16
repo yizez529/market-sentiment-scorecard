@@ -82,7 +82,7 @@ push 成功后会看到类似 `Branch 'main' set up to track 'origin/main'`。
 | Name | Value | 在哪里拿 |
 |------|-------|---------|
 | `OPENAI_API_KEY` | `sk-xxxx...` | https://platform.openai.com/api-keys |
-| `FEISHU_WEBHOOK` | `https://open.feishu.cn/open-apis/bot/v2/hook/23517c05-1423-4f82-a381-6238f86aec3a` | （已有） |
+| `FEISHU_WEBHOOK` | `https://open.feishu.cn/open-apis/bot/v2/hook/<webhook-id>` | （已有） |
 | `FRED_API_KEY` | `xxxxxxxx` | 免费注册 https://fred.stlouisfed.org/docs/api/api_key.html （5 分钟） |
 
 ### OpenAI API

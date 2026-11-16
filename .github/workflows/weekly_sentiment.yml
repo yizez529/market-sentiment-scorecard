@@ -54,7 +54,7 @@ jobs:
       - name: Check required env vars present
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          OPENAI_RUN_COST_CAP_USD: ${{ vars.OPENAI_RUN_COST_CAP_USD }}
+          OPENAI_RUN_COST_CAP_USD: ${{ vars.OPENAI_RUN_COST_CAP_USD || '0.20' }}
           FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
           FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
@@ -88,7 +88,7 @@ jobs:
       - name: Run weekly scorecard
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          OPENAI_RUN_COST_CAP_USD: ${{ vars.OPENAI_RUN_COST_CAP_USD }}
+          OPENAI_RUN_COST_CAP_USD: ${{ vars.OPENAI_RUN_COST_CAP_USD || '0.20' }}
           FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
           FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
